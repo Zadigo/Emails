@@ -232,6 +232,26 @@ class EmailPatterns(EmailConstructor, PatternsMixin):
     def append_domain(self, name):
         return name + '@' + self.domain
 
+class EmailPatternRepr(EmailPatterns):
+    """This is the basic class used to return the list
+    of emails that were created.
+
+    By subclassing this class you get a list of values
+    such as `[[headers], [..., ...]]`.
+    """
+    def __str__(self):
+        return str(self.construct_pattern())
+
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, str(self.construct_pattern()))
+
+    def __getitem__(self, index):
+        # Add one in order to return
+        # a list not being the headers
+        if index == 0:
+            index = index + 1
+        return str(self.construct_pattern()[index])
+
 class BasicPatterns(PatternsMixin):
     """Use this class to construct a list of
     emails from scratch providing a `name` or

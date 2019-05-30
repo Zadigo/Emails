@@ -1,4 +1,4 @@
-from email_constructor import EmailPatterns
+from email_constructor import EmailPatterns, EmailPatternRepr
 
 class EDHEC(EmailPatterns):
     pattern = 'nom.prenom'
@@ -47,5 +47,11 @@ class ESSEC(EmailPatterns):
     pattern = ['nom', 'nomp']
     domain = 'essec.edu'
 
+class Neoma(EmailPatternRepr):
+    pattern = 'prenom.nom'
+    domain = 'neoma.fr'
+
 # print(SKEMA('path').construct_pattern())
 # print(ESCP('path').construct_pattern())
+
+print(Neoma('test'))
