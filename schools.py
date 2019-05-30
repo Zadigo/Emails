@@ -47,4 +47,5 @@ class ESSEC(EmailPatterns):
     pattern = ['nom', 'nomp']
     domain = 'essec.edu'
 
-print(SKEMA('path').construct_pattern())
+# print(SKEMA('path').construct_pattern())
+# print(ESCP('path').construct_pattern())

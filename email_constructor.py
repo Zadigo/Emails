@@ -105,6 +105,8 @@ class EmailPatterns(EmailConstructor, PatternsMixin):
                         # We have to try and get
                         # the type of separator
                         # used in the pattern
+                        # TODO: Factorize this section
+                        # into a function
                         for base_regex_pattern in base_regex_patterns['with_separator']:
                             pattern_separator = re.search(base_regex_pattern, self.pattern)
                             # Break on first match
@@ -146,7 +148,45 @@ class EmailPatterns(EmailConstructor, PatternsMixin):
                         return self.csv_content
 
                     else:
-                        pass
+                        # TODO: Factorize this section
+                        # into a function
+                        for base_regex_pattern in base_regex_patterns['without_separator']:
+                            captured_elements = re.search(base_regex_pattern, self.pattern)
+                            # Break on first match
+                            if captured_elements:
+                                break
+                        
+                        # Get group(1) & group(2)
+                        # ex. p, nom, n, prenom
+                        first_captured_element = captured_elements.group(1)
+                        second_captured_element = captured_elements.group(2)
+
+                        truncated_name = truncated_surname = ''
+
+                        for items in self.csv_content:
+                            if first_captured_element == 'n':
+                                # TODO: Factorize
+                                truncated_surname = items[0][:1]
+                            elif first_captured_element == 'p':
+                                # TODO: Factorize
+                                truncated_name = items[1][:1]
+
+                            if second_captured_element == 'nom':
+                                name_to_append = items[0]
+                            elif second_captured_element == 'prenom':
+                                name_to_append = items[1]
+
+                            final_pattern = truncated_name + name_to_append or \
+                                             truncated_surname + name_to_append
+                                             
+                            # If a domain was provided,
+                            # append it to the names
+                            if self.domain:
+                                items.append(self.append_domain(final_pattern))
+                            else:
+                                items.append(final_pattern)
+
+                        return self.csv_content
 
             else:
                 raise TypeError()
@@ -154,8 +194,4 @@ class EmailPatterns(EmailConstructor, PatternsMixin):
             raise TypeError()
 
     def append_domain(self, name):
-        return name + '@' + self.domain  
-
-# test=EmailPatterns(test_path)
-# test.pattern='nom.prenom'
-# print(test.construct_pattern())
+        return name + '@' + self.domain
