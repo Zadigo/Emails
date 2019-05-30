@@ -38,16 +38,6 @@ class UtilitiesMixin:
             new_name += letter
         return self.normalize_name(new_name)
 
-class PatternsMixin(UtilitiesMixin):
-    """A basic helper to construct email
-    pattern names.
-    """
-    def name_dot_surname(self, name):
-        """`name.surname@domain.fr`
-        """
-        names = self.splitter(name)
-        return f'{names[0]}.{names[1]}'
-
 class EmailConstructor:
     """Open a file to construct a list of emails.
     The file path can be a url or a path on your
@@ -82,7 +72,7 @@ class EmailConstructor:
         """
         return self.csv_content
 
-class EmailPatterns(EmailConstructor, PatternsMixin):
+class EmailPatterns(EmailConstructor):
     """Subclass this class and build basic email
     patterns such as `name.surname`.
 
@@ -252,7 +242,7 @@ class EmailPatternRepr(EmailPatterns):
             index = index + 1
         return str(self.construct_pattern()[index])
 
-class BasicPatterns(PatternsMixin):
+class BasicPatterns:
     """Use this class to construct a list of
     emails from scratch providing a `name` or
     a `filepath`. This will take a name and create
