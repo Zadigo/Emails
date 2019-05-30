@@ -50,5 +50,3 @@ class ESSEC(NamePatterns):
 class Neoma(NamePatterns):
     pattern = 'prenom.nom'
     domain = 'neoma.fr'
-
-print(ISCOM('test'))

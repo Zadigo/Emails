@@ -87,6 +87,7 @@ class NameConstructor(FileOpener):
     particle = ''
 
     def construct_pattern(self):
+        # self.config['BASE_REGEX_PATTERNS']
         base_regex_patterns = {
             'with_separator': [
                 # nom.prenom // prenom.nom

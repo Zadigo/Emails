@@ -13,6 +13,12 @@ class Configuration(dict):
 
         # Path to the data folder
         self['DATA_DIR'] = os.path.join(self['BASE_DIR'], 'data')
+        
+        # Set user and password for
+        # the SMTP server
+        self['USER'] = None
+        
+        self['PASSWORD'] = None
 
         # These are the base regex patterns
         # used in order parse the pattern
@@ -48,10 +54,10 @@ class Configuration(dict):
         self['SERVER_CONFIG'] = [
             {
                 'default': {
-                    'host': '',
-                    'port': '',
-                    'user': '',
-                    'password': ''
+                    'host': 'smtp.gmail.com',
+                    'port': 597,
+                    'user': self.get('USER'),
+                    'password': self.get('PASSWORD')
                 }
             }
         ]
