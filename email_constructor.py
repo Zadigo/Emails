@@ -1,13 +1,59 @@
 import csv
 import re
+import os
 
 test_path='C:\\Users\\Zadigo\\Documents\\Programs\\EmailsApp\\test.csv'
 
-class EmailConstructor:
-    def __init__(self, file_path=None):
-        """Open a file to construct a list of emails.
+class UtilitiesMixin:
+    def splitter(self, name):
+        """Create an array with the name. `Eugénie Bouchard`
+        becomes `['Eugénie', 'Bouchard']`.
         """
+        return name.split(' ')
 
+    def normalize_name(self, name):
+        return name.lower().strip()
+
+    def flatten_name(self, name):
+        r"""Replace all accents from a name and
+        normalize it: `Eugénie Bouchard` or `Eugénie Bouchard\s?`
+        becomes `eugenie bouchard`.
+        """
+        new_name=''
+        accents = {
+            'é': 'e',
+            'è': 'e',
+            'ê': 'e',
+            'ë': 'e',
+            'ï': 'i',
+            'î': 'i',
+            'ü': 'u',
+            'ù': 'u',
+            'à': 'a',
+        }
+        for letter in name:
+            for key, value in accents.items():
+                if letter == key:
+                    letter = value
+            new_name += letter
+        return self.normalize_name(new_name)
+
+class PatternsMixin(UtilitiesMixin):
+    """A basic helper to construct email
+    pattern names.
+    """
+    def name_dot_surname(self, name):
+        """`name.surname@domain.fr`
+        """
+        names = self.splitter(name)
+        return f'{names[0]}.{names[1]}'
+
+class EmailConstructor:
+    """Open a file to construct a list of emails.
+    The file path can be a url or a path on your
+    computer.
+    """
+    def __init__(self, file_path=None):
         file_path = test_path
 
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -35,16 +81,6 @@ class EmailConstructor:
         """Get the raw csv content
         """
         return self.csv_content
-
-class PatternsMixin:
-    def name_dot_surname(self, name):
-        """`name.surname@domain.fr`
-        """
-        # for content in self.csv_content:
-        #     structure = f'{content[0]}.{content[1]}'
-        #     content.append(structure)
-        # return self.csv_content
-        pass
 
 class EmailPatterns(EmailConstructor, PatternsMixin):
     """Subclass this class and build basic email
@@ -195,3 +231,44 @@ class EmailPatterns(EmailConstructor, PatternsMixin):
 
     def append_domain(self, name):
         return name + '@' + self.domain
+
+class BasicPatterns(PatternsMixin):
+    """Use this class to construct a list of
+    emails from scratch providing a `name` or
+    a `filepath`. This will take a name and create
+    patterns with all provided domains.
+
+    Ex. with `Aurélie Konaté`: __['aurelie.konate@gmail.com', 'aurelie.konate@outlook.com', 
+    'aurelie-konate@gmail.com', 'aurelie-konate@outlook.com', 'aurelie_konate@gmail.com', 
+    'aurelie_konate@outlook.com']__
+
+    You use this class directly as iterable to output the values to a given file:
+    > with open(file_path, 'w') as f:
+
+    >> f.writelines(BasicPatterns('Aurélie Konaté'))
+    """
+    def __init__(self, name_or_filepath, separators=['.', '-', '_'], 
+                    domains=['gmail', 'outlook']):
+        patterns = []
+
+        name = self.splitter(self.flatten_name(name_or_filepath))
+
+        # Create occurences
+        for separator in separators:
+            for domain in domains:
+                pattern = f'{name[0]}{separator}{name[1]}@{domain}.com'
+                patterns.append(pattern)
+        self.patterns = patterns
+
+    def __str__(self):
+        return str(self.patterns)
+
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, str(self.patterns))
+
+    def __getitem__(self, index):
+        return str(self.patterns[index])
+
+    def append(self, value):
+        self.patterns.append(value)
+        return self.__str__()
