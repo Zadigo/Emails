@@ -1,8 +1,8 @@
 import csv
 import re
 import os
+from configurations import Configuration
 
-test_path='C:\\Users\\Zadigo\\Documents\\Programs\\EmailsApp\\test.csv'
 
 class UtilitiesMixin:
     def splitter(self, name):
@@ -38,13 +38,16 @@ class UtilitiesMixin:
             new_name += letter
         return self.normalize_name(new_name)
 
-class EmailConstructor:
+class FileOpener(UtilitiesMixin):
     """Open a file to construct a list of emails.
     The file path can be a url or a path on your
     computer.
     """
+    config = Configuration()
+
     def __init__(self, file_path=None):
-        file_path = test_path
+        file_path = self.config['DUMMY_FILE']\
+                     = os.path.join(self.config['DATA_DIR'], 'dummy.csv')
 
         with open(file_path, 'r', encoding='utf-8') as f:
             csv_file = csv.reader(f)
@@ -55,24 +58,11 @@ class EmailConstructor:
         self.headers = csv_content.pop(0)
         for content in csv_content:
             for i in range(len(content)):
-                content[i] = self.normalize_names(content[i])
+                content[i] = self.normalize_name(content[i])
         # Store the csv's content
         self.csv_content = csv_content
 
-    @staticmethod
-    def normalize_names(name):
-        """Normalize a name for example 
-        from `Pierre LOPEZ` to `Pierre Lopez`.
-        """
-        return name.lower().strip()
-
-    @property
-    def get_content(self):
-        """Get the raw csv content
-        """
-        return self.csv_content
-
-class EmailPatterns(EmailConstructor):
+class NameConstructor(FileOpener):
     """Subclass this class and build basic email
     patterns such as `name.surname`.
 
@@ -222,7 +212,7 @@ class EmailPatterns(EmailConstructor):
     def append_domain(self, name):
         return name + '@' + self.domain
 
-class EmailPatternRepr(EmailPatterns):
+class NamePatterns(NameConstructor):
     """This is the basic class used to return the list
     of emails that were created.
 
@@ -242,17 +232,17 @@ class EmailPatternRepr(EmailPatterns):
             index = index + 1
         return str(self.construct_pattern()[index])
 
-class BasicPatterns:
-    """Use this class to construct a list of
-    emails from scratch providing a `name` or
-    a `filepath`. This will take a name and create
-    patterns with all provided domains.
+class BasicNamePatterns(UtilitiesMixin):
+    """Use this class to construct a list of emails 
+    from scratch providing a `name` or a `filepath`.
+    
+    This will take a name and create patterns with all provided domains.
 
-    Ex. with `Aurélie Konaté`: __['aurelie.konate@gmail.com', 'aurelie.konate@outlook.com', 
+    Ex. with `Aurélie Konaté`: ['aurelie.konate@gmail.com', 'aurelie.konate@outlook.com', 
     'aurelie-konate@gmail.com', 'aurelie-konate@outlook.com', 'aurelie_konate@gmail.com', 
-    'aurelie_konate@outlook.com']__
+    'aurelie_konate@outlook.com'].
 
-    You use this class directly as iterable to output the values to a given file:
+    You use this class directly *as an iterable* to output the values to a given file:
     > with open(file_path, 'w') as f:
 
     >> f.writelines(BasicPatterns('Aurélie Konaté'))

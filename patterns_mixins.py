@@ -68,5 +68,3 @@ class PatternsMixin(UtilitiesMixin):
 
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, self.names)
-
-print(PatternsMixin('Aurélie Konaté', reverse=True).name_underscore_surname())

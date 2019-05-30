@@ -1,57 +1,54 @@
-from email_constructor import EmailPatterns, EmailPatternRepr
+from email_constructor import NamePatterns
 
-class EDHEC(EmailPatterns):
+class EDHEC(NamePatterns):
     pattern = 'nom.prenom'
     domain = ''
 
-class HEC(EmailPatterns):
+class HEC(NamePatterns):
     pattern = ['nomp', 'nom']
     domain = 'hec.fr'
 
-class EMLyon(EmailPatterns):
+class EMLyon(NamePatterns):
     pattern = 'nom.prenom'
     domain = 'em-lyon.com'
 
-class SKEMA(EmailPatterns):
+class SKEMA(NamePatterns):
     pattern = 'prenom.nom'
     domain = 'skema.edu'
 
-class PolytechParis(EmailPatterns):
+class PolytechParis(NamePatterns):
     pattern = 'prenom.nom'
     domain = 'polytechnique.edu'
 
-class ESCP(EmailPatterns):
+class ESCP(NamePatterns):
     pattern = 'pnom'
     domain = 'escpeurope.eu'
 
-class CentraleParis(EmailPatterns):
+class CentraleParis(NamePatterns):
     pattern = 'nom.prenom'
     domain = ''
 
 class CentraleLille(CentraleParis):
     domain = ''
 
-class HEI(EmailPatterns):
+class HEI(NamePatterns):
     pattern = 'nom.prenom'
     domain = ''
 
-class KEDGE(EmailPatterns):
+class KEDGE(NamePatterns):
     pattern = 'prenom.nom'
     domain = 'kedgebs.com'
 
-class ISCOM(EmailPatterns):
+class ISCOM(NamePatterns):
     pattern = 'prenom.nom'
     domain = 'iscom.fr'
 
-class ESSEC(EmailPatterns):
+class ESSEC(NamePatterns):
     pattern = ['nom', 'nomp']
     domain = 'essec.edu'
 
-class Neoma(EmailPatternRepr):
+class Neoma(NamePatterns):
     pattern = 'prenom.nom'
     domain = 'neoma.fr'
 
-# print(SKEMA('path').construct_pattern())
-# print(ESCP('path').construct_pattern())
-
-print(Neoma('test'))
+print(ISCOM('test'))
