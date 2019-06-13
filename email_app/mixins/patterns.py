@@ -1,8 +1,8 @@
-from email_constructor import UtilitiesMixin
+from email_app.patterns.constructor import UtilitiesMixin
 
 class PatternsMixin(UtilitiesMixin):
     """A basic helper to construct email
-    pattern names.
+    pattern names quickly.
     """
     def __init__(self, name, reverse=False):
         # ['Eugénie', 'Bouchard'] ->
