@@ -34,7 +34,6 @@ class BaseServer:
 class Gmail(BaseServer):
     def __init__(self, user, password):
         super().__init__('smtp.gmail.com', 587, user, password)
-        # self.connection = self.create_connection('smtp.gmail.com', 587, user, password)
 
 class Outlook(BaseServer):
     def __init__(self, user, password):
