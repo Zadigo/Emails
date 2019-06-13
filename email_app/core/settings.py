@@ -1,3 +1,6 @@
+"""Core configuration for the application
+"""
+
 import os
 from datetime import datetime
 from secrets import token_hex
@@ -9,7 +12,7 @@ class Configuration(dict):
     """
     def __init__(self):
         # Root path for the project
-        self['BASE_DIR'] = os.path.dirname(os.path.abspath(__file__))
+        self['BASE_DIR'] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
         # Path to the data folder
         self['DATA_DIR'] = os.path.join(self['BASE_DIR'], 'data')
@@ -65,3 +68,7 @@ class Configuration(dict):
         # Name used by default to create
         # a new file
         self['NEW_FILE_PATTERN_NAME'] = '{month}_{year}_{token}'
+
+        # This is a test parameter variable
+        # created to test the features of the application
+        self['DUMMY_FILE'] = os.path.join(self['DATA_DIR'], 'dummy.csv')

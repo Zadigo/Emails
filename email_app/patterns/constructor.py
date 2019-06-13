@@ -1,10 +1,12 @@
 import csv
 import re
 import os
-from configurations import Configuration
+from email_app.core.settings import Configuration
 
 
 class UtilitiesMixin:
+    """A mixin for various tasks on names
+    """
     def splitter(self, name):
         """Create an array with the name. `Eugénie Bouchard`
         becomes `['Eugénie', 'Bouchard']`.
@@ -46,9 +48,6 @@ class FileOpener(UtilitiesMixin):
     config = Configuration()
 
     def __init__(self, file_path=None):
-        file_path = self.config['DUMMY_FILE']\
-                     = os.path.join(self.config['DATA_DIR'], 'dummy.csv')
-
         with open(file_path, 'r', encoding='utf-8') as f:
             csv_file = csv.reader(f)
             csv_content = list(csv_file).copy()
@@ -215,7 +214,7 @@ class NameConstructor(FileOpener):
 
 class NamePatterns(NameConstructor):
     """This is the basic class used to return the list
-    of emails that were created.
+    of emails that were created as a string.
 
     By subclassing this class you get a list of values
     such as `[[headers], [..., ...]]`.

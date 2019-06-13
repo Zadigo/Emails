@@ -1,4 +1,4 @@
-from email_constructor import NamePatterns
+from email_app.patterns.constructor import NamePatterns
 
 class EDHEC(NamePatterns):
     pattern = 'nom.prenom'
