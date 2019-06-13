@@ -33,3 +33,17 @@ class UtilitiesMixin:
                     letter = value
             new_name += letter
         return self.normalize_name(new_name)
+
+    def reverse(self, name):
+        return list(reversed(self.splitter(name)))
+
+    def decompose(self, name, change_position=False):
+        splitted_name = self.splitter(name)
+        # Pop middle name
+        middle_name = splitted_name.pop(1)
+        # Create composed name
+        composed_name = ' '.join([middle_name, splitted_name[1]])
+        # ..
+        splitted_name[1] = composed_name
+        return splitted_name
+        
