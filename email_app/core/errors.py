@@ -6,7 +6,7 @@ class EmailerError(Exception):
         return self.__unicode__()
 
     def __unicode__(self, text=None):
-        return 'Error' or text
+        return text or 'Error'
         
 class NoServerError(EmailerError):
     def __init__(self, error_message):
@@ -14,3 +14,8 @@ class NoServerError(EmailerError):
 
     def __unicode__(self):
         return super().__unicode__(self.error_message)
+
+class NoPatternError(EmailerError):
+    def __unicode__(self, text=None):
+        return super().__unicode__('A pattern was not provided. '
+            'Did you forget to provide one? (ex. name.surname)')

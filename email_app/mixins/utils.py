@@ -1,3 +1,6 @@
+import re
+import collections
+
 class UtilitiesMixin:
     """A mixin for various tasks on names
     """
@@ -14,6 +17,8 @@ class UtilitiesMixin:
         r"""Replace all accents from a name and
         normalize it: `Eugénie Bouchard` or `Eugénie Bouchard\s?`
         becomes `eugenie bouchard`.
+
+        NOTE - This will also normalize the name
         """
         new_name=''
         accents = {
@@ -46,4 +51,3 @@ class UtilitiesMixin:
         # ..
         splitted_name[1] = composed_name
         return splitted_name
-        

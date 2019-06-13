@@ -1,4 +1,5 @@
 from email_app.patterns.constructor import NamePatterns
+from email_app.mixins.fields import EmailField
 
 class EDHEC(NamePatterns):
     pattern = 'nom.prenom'
@@ -50,3 +51,6 @@ class ESSEC(NamePatterns):
 class Neoma(NamePatterns):
     pattern = 'prenom.nom'
     domain = 'neoma.fr'
+
+class ISTC(NamePatterns):
+    pattern = EmailField('test.test@istc.com', r'(\w+)(\.)(\w+)\@(\w+(\.\w+))')

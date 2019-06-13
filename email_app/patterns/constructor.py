@@ -1,6 +1,7 @@
 import csv
 import re
 import os
+from email_app.core.errors import NoPatternError
 from email_app.mixins.utils import UtilitiesMixin
 from email_app.core.settings import Configuration
 
@@ -82,9 +83,8 @@ class NameConstructor(FileOpener):
                     if '.' in self.pattern or '-' in self.pattern or \
                         '_' in self.pattern:
                         pattern_separator = ''
-                        # We have to try and get
-                        # the type of separator
-                        # used in the pattern
+                        # We have to try and identify
+                        # the type of separator used in the pattern
                         # TODO: Factorize this section
                         # into a function
                         for base_regex_pattern in base_regex_patterns['with_separator']:
@@ -93,7 +93,9 @@ class NameConstructor(FileOpener):
                             if pattern_separator:
                                 break
                         
-                        # ex. ['nom', 'prenom'] using matched separator
+                        # We can split the names once the separator has
+                        # been correctly identified
+                        # ex. ['nom', 'prenom']
                         separator_object = pattern_separator.group(1)
                         names = self.pattern.split(separator_object, 1)
                         
@@ -171,68 +173,36 @@ class NameConstructor(FileOpener):
             else:
                 raise TypeError()
         else:
-            raise TypeError()
+            raise NoPatternError()
 
     def append_domain(self, name):
         return name + '@' + self.domain
 
-class NamePatterns(NameConstructor):
-    """This is the basic class used to return the list
-    of emails that were created as a string.
+    def search_separator(self, name, with_separator=True):
+        """Get a regex match using the REGEX email
+        engine. The `with_separator` parameter helps you match
+        a pattern that has a separator or that has none
+        """
+        if with_separator:
+            for base_regex_pattern in self.config['BASE_REGEX_PATTERNS']['with_separator']:
+                captured_elements = re.search(base_regex_pattern, self.pattern)
+                # Break on first match
+                if captured_elements:
+                    break
+            return captured_elements.group(1)
+        else:
+            for base_regex_pattern in self.config['BASE_REGEX_PATTERNS']['without_separator']:
+                captured_elements = re.search(base_regex_pattern, self.pattern)
+                # Break on first match
+                if captured_elements:
+                    break
 
-    By subclassing this class you get a list of values
-    such as `[[headers], [..., ...]]`.
-    """
-    def __str__(self):
-        return str(self.construct_pattern())
+            # Get group(1) & group(2)
+            # ex. p, nom; n, prenom...
+            first_captured_element = captured_elements.group(1)
+            second_captured_element = captured_elements.group(2)
+            return first_captured_element, second_captured_element
 
-    def __repr__(self):
-        return '%s(%s)' % (self.__class__.__name__, str(self.construct_pattern()))
-
-    def __getitem__(self, index):
-        # Add one in order to return
-        # a list not being the headers
-        if index == 0:
-            index = index + 1
-        return str(self.construct_pattern()[index])
-
-class BasicNamePatterns(UtilitiesMixin):
-    """Use this class to construct a list of emails 
-    from scratch providing a `name` or a `filepath`.
-    
-    This will take a name and create patterns with all provided domains.
-
-    Ex. with `Aurélie Konaté`: ['aurelie.konate@gmail.com', 'aurelie.konate@outlook.com', 
-    'aurelie-konate@gmail.com', 'aurelie-konate@outlook.com', 'aurelie_konate@gmail.com', 
-    'aurelie_konate@outlook.com'].
-
-    You use this class directly *as an iterable* to output the values to a given file:
-    > with open(file_path, 'w') as f:
-
-    >> f.writelines(BasicPatterns('Aurélie Konaté'))
-    """
-    def __init__(self, name_or_filepath, separators=['.', '-', '_'], 
-                    domains=['gmail', 'outlook']):
-        patterns = []
-
-        name = self.splitter(self.flatten_name(name_or_filepath))
-
-        # Create occurences
-        for separator in separators:
-            for domain in domains:
-                pattern = f'{name[0]}{separator}{name[1]}@{domain}.com'
-                patterns.append(pattern)
-        self.patterns = patterns
-
-    def __str__(self):
-        return str(self.patterns)
-
-    def __repr__(self):
-        return '%s(%s)' % (self.__class__.__name__, str(self.patterns))
-
-    def __getitem__(self, index):
-        return str(self.patterns[index])
-
-    def append(self, value):
-        self.patterns.append(value)
-        return self.__str__()
+s = NameConstructor(Configuration()['DUMMY_FILE'])
+s.pattern = 'nom.prenom'
+print(s.construct_pattern())
