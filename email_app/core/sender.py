@@ -17,7 +17,8 @@ class SendEmail:
     def __init__(self, sender, receiver, subject, **kwargs):
         if self.server:
             if callable(self.server):
-                # Create a server instance
+                # Create a new server instance
+                # to be used
                 Klass = self.server('', '')
             else:
                 raise NoServerError('Server is not a callable. \
@@ -66,3 +67,6 @@ class SendEmailWithAttachment(SendEmail):
         filename = os.path.basename(path)
         attachment.add_header('Content-Disposition', "attachment; filename= %s" % filename)
         return attachment
+
+
+# print(Gmail.__dict__)
