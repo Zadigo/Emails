@@ -1,4 +1,4 @@
-from email_app.patterns.constructor import NamePatterns
+from email_app.patterns.patterns import NamePatterns
 from email_app.mixins.fields import EmailField
 
 class EDHEC(NamePatterns):

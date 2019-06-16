@@ -203,6 +203,6 @@ class NameConstructor(FileOpener):
             second_captured_element = captured_elements.group(2)
             return first_captured_element, second_captured_element
 
-s = NameConstructor(Configuration()['DUMMY_FILE'])
-s.pattern = 'nom.prenom'
-print(s.construct_pattern())
+# s = NameConstructor(Configuration()['DUMMY_FILE'])
+# s.pattern = 'nom.prenom'
+# print(s.construct_pattern())

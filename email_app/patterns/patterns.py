@@ -28,7 +28,8 @@ class NamePatterns(NameConstructor):
 
 class BasicNamePatterns(UtilitiesMixin):
     """Use this class to construct a list of of multiple emails 
-    from scratch providing a `name` or a `filepath`.
+    from scratch providing a person's `name` or a `filepath` 
+    containing a batch of names.
     
     This will take a name and create patterns with all provided domains.
 
@@ -47,6 +48,7 @@ class BasicNamePatterns(UtilitiesMixin):
                     domains=['gmail', 'outlook']):
         patterns = []
 
+        # Split names
         name = self.splitter(self.flatten_name(name_or_filepath))
 
         # Create occurences

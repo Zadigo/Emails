@@ -5,8 +5,8 @@ class UtilitiesMixin:
     """A mixin for various tasks on names
     """
     def splitter(self, name):
-        """Create an array with the name. `Eugénie Bouchard`
-        becomes `['Eugénie', 'Bouchard']`.
+        """Create an array with the names by seperating
+        them. Therefore, `Eugénie Bouchard` becomes `['Eugénie', 'Bouchard']`.
         """
         return name.split(' ')
 
@@ -43,6 +43,11 @@ class UtilitiesMixin:
         return list(reversed(self.splitter(name)))
 
     def decompose(self, name, change_position=False):
+        """Work with composed names such as `Eugenie Pauline Bouchard`
+        to `Eugenie` - `Pauline Bouchard`. By using `change_position`,
+        you can get `Eugenie Pauline` - `Bouchard`
+        """
+        # [Eugenie, Pauline, Bouchard]
         splitted_name = self.splitter(name)
         # Pop middle name
         middle_name = splitted_name.pop(1)
@@ -50,4 +55,6 @@ class UtilitiesMixin:
         composed_name = ' '.join([middle_name, splitted_name[1]])
         # ..
         splitted_name[1] = composed_name
+        # [Eugenie, Pauline Bouchard] or
+        # [Eugenie Pauline, Bouchard]
         return splitted_name
