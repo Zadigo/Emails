@@ -7,4 +7,4 @@ from email_app.patterns.patterns import BasicNamePatterns
 # print(ESCP(path))
 # print(PatternsMixin('Paris Lopez'))
 
-print(NamePatterns.config)
+print(ESCP(Configuration()['DUMMY_FILE']))
