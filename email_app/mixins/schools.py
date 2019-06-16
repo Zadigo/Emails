@@ -54,3 +54,4 @@ class Neoma(NamePatterns):
 
 class ISTC(NamePatterns):
     pattern = EmailField('test.test@istc.com', r'(\w+)(\.)(\w+)\@(\w+(\.\w+))')
+        
