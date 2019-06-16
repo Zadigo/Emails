@@ -1,12 +1,13 @@
 import unittest
-from email_constructor import EmailPatterns
+from email_app.core.settings import Configuration
+from email_app.patterns.constructor import NamePatterns
 
 class TestPatterns(unittest.TestCase):
     def setUp(self):
         # Use the dummy file to do
         # all the testing
-        test_path='C:\\Users\\Zadigo\\Documents\\Programs\\EmailsApp\\test.csv'
-        self.constructor = EmailPatterns(test_path)
+        test_path = Configuration()['DUMMY_FILE']
+        self.constructor = NamePatterns(test_path)
 
     def test_pattern_dot_one(self):
         self.constructor.pattern = 'nom.prenom'

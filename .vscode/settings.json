@@ -2,10 +2,10 @@
     "python.testing.unittestArgs": [
         "-v",
         "-s",
-        "./tests",
+        "/emails_app/tests/",
         "-p",
         "test_*.py"
     ],
     "python.testing.autoTestDiscoverOnSaveEnabled": true,
-    "python.testing.unittestEnabled": true
+    "python.testing.unittestEnabled": true,
 }
