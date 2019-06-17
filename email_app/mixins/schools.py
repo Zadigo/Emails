@@ -1,3 +1,7 @@
+"""This module regroups a series of classes that can be used
+to construct emails off business schools.
+"""
+
 from email_app.patterns.patterns import NamePatterns
 from email_app.mixins.fields import EmailField
 
