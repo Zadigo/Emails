@@ -9,3 +9,5 @@ from email_app.mixins.fields import EmailField
 # print(PatternsMixin('Paris Lopez'))
 
 # print(ESCP(Configuration()['DUMMY_FILE']))
+
+schools.CentraleParis('C:\\')

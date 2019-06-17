@@ -176,6 +176,11 @@ class NameConstructor(FileOpener):
                                 items.append(final_pattern)
 
                         return self.csv_content                
+            elif isinstance(self.pattern, (list, tuple)):
+                # If we get a list or a tuple, this means
+                # that we have to deal with multiple patterns
+                # self.multiple_patterns(values=self.pattern)
+                pass
             else:
                 raise TypeError()
         else:
@@ -208,6 +213,15 @@ class NameConstructor(FileOpener):
             first_captured_element = captured_elements.group(1)
             second_captured_element = captured_elements.group(2)
             return first_captured_element, second_captured_element
+
+    @classmethod
+    def multiple_patterns(cls, **kwargs):
+        # Construct a pattern
+        cls.construct_pattern(cls)
+        for name in kwargs['names']:
+            # Search separator
+            for pattern in kwargs['patterns']:
+                cls.search_separator(cls, name)
 
 # s = NameConstructor(Configuration()['DUMMY_FILE'])
 # s.pattern = 'nom.prenom'
