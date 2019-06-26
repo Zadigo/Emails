@@ -1,1 +1,1 @@
-include VERSION.txt LICENSE requirements.txt
+include VERSION.txt README.rst LICENSE requirements.txt
