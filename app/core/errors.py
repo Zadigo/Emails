@@ -15,10 +15,12 @@ class NoServerError(EmailerError):
     def __unicode__(self):
         return super().__unicode__(self.error_message)
 
-class NoPatternError(EmailerError):
-    def __unicode__(self, text=None):
-        return super().__unicode__('A pattern was not provided. '
-            'Did you forget to provide one? (ex. name.surname)')
+class NoPatternError(TypeError):
+    def __unicode__(self):
+        return 'A pattern was not provided. Did you forget to provide one? (ex. name.surname)'
+
+    def __str__(self, text=None):
+        return self.__unicode__()
 
 class ImproperlyConfiguredError(EmailerError):
     """Error that can be raised when setting is not correct

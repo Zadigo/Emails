@@ -11,6 +11,9 @@ class UtilitiesMixin:
         return name.split(' ')
 
     def normalize_name(self, name):
+        """A helper function that normalizes a name to lowercase
+        and by stripping any whitespaces
+        """
         return name.lower().strip()
 
     def flatten_name(self, name):
@@ -44,8 +47,10 @@ class UtilitiesMixin:
 
     def decompose(self, name, change_position=False):
         """Work with composed names such as `Eugenie Pauline Bouchard`
-        to `Eugenie` - `Pauline Bouchard`. By using `change_position`,
-        you can get `Eugenie Pauline` - `Bouchard`
+        to `Eugenie` - `Pauline Bouchard`.
+        
+        By using `change_position`,
+        you can get `Eugenie Pauline` - `Bouchard` instead
         """
         # [Eugenie, Pauline, Bouchard]
         splitted_name = self.splitter(name)

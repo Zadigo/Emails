@@ -1,9 +1,11 @@
 import csv
-import re
 import os
+import re
+
 from app.core.errors import NoPatternError
-from app.mixins.utils import UtilitiesMixin
 from app.core.settings import Configuration
+from app.mixins.utils import UtilitiesMixin
+
 
 class FileOpener(UtilitiesMixin):
     """Open a file to construct a list of emails.
@@ -20,9 +22,11 @@ class FileOpener(UtilitiesMixin):
         # Pop the headers but keep
         # them for later usage
         self.headers = csv_content.pop(0)
+
         for content in csv_content:
             for i in range(len(content)):
                 content[i] = self.normalize_name(content[i])
+                
         # Store the csv's content
         self.csv_content = csv_content
 
@@ -102,17 +106,21 @@ class NameConstructor(FileOpener):
                         index_of_surname = names.index('nom')
                         index_of_name = names.index('prenom')
 
-                        # We have to create a blank
+                        # We have to create a reusable
                         # canvas to prevent changing
                         # the names[...] data on each
                         # iteration
                         template_names = names.copy()
 
+                        # Replace [name, surname] by the
+                        # respective names in the file
+                        # according to the index of name
+                        # and surname in the array
+                        # ex. [name, surname] => [pauline, lopez]
                         for items in self.csv_content:
-                            # names[index_of_name] = 'test'
-                            # names[index_of_surname] = 'testa'
                             template_names[index_of_surname] = items[0]
                             template_names[index_of_name] = items[1]
+                            # Join both using the separator
                             final_pattern = separator_object.join(template_names)
                             # If a domain was provided,
                             # append it to the names
@@ -168,8 +176,12 @@ class NameConstructor(FileOpener):
                             else:
                                 items.append(final_pattern)
 
-                        return self.csv_content
-
+                        return self.csv_content                
+            elif isinstance(self.pattern, (list, tuple)):
+                # If we get a list or a tuple, this means
+                # that we have to deal with multiple patterns
+                # self.multiple_patterns(values=self.pattern)
+                pass
             else:
                 raise TypeError()
         else:
@@ -202,6 +214,15 @@ class NameConstructor(FileOpener):
             first_captured_element = captured_elements.group(1)
             second_captured_element = captured_elements.group(2)
             return first_captured_element, second_captured_element
+
+    @classmethod
+    def multiple_patterns(cls, **kwargs):
+        # Construct a pattern
+        cls.construct_pattern(cls)
+        for name in kwargs['names']:
+            # Search separator
+            for pattern in kwargs['patterns']:
+                cls.search_separator(cls, name)
 
 # s = NameConstructor(Configuration()['DUMMY_FILE'])
 # s.pattern = 'nom.prenom'

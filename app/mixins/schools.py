@@ -53,4 +53,21 @@ class Neoma(NamePatterns):
     domain = 'neoma.fr'
 
 class ISTC(NamePatterns):
-    pattern = EmailField('test.test@istc.com', r'(\w+)(\.)(\w+)\@(\w+(\.\w+))')
+    pattern = ''
+
+class Universities(NamePatterns):
+    """This class is voluntarily empty
+    and can subclassed to create patterns
+    for universities
+    """
+    def from_url(self, url):
+        if self._ping(url):
+            pass
+        pass
+
+    @staticmethod
+    def _ping(url):
+        response = requests.get(url, headers={'User-Agent': ''})
+        if response.status_code == 200:
+            return True
+        return False

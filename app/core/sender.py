@@ -70,6 +70,4 @@ class SendEmailWithAttachment(SendEmail):
         filename = os.path.basename(path)
         attachment.add_header('Content-Disposition', "attachment; filename= %s" % filename)
         return attachment
-
-
-# print(Gmail.__dict__)
+        
