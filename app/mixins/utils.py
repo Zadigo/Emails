@@ -1,3 +1,7 @@
+"""A utilities class for various tasks on name such as
+reversing or splitting names
+"""
+
 import re
 import collections
 
@@ -43,6 +47,9 @@ class UtilitiesMixin:
         return self.normalize_name(new_name)
 
     def reverse(self, name):
+        """Reverse a name from `[Eugenie, Bouchard]` to
+        `[Bouchard, Eugenie]`
+        """
         return list(reversed(self.splitter(name)))
 
     def decompose(self, name, change_position=False):
@@ -54,6 +61,11 @@ class UtilitiesMixin:
         """
         # [Eugenie, Pauline, Bouchard]
         splitted_name = self.splitter(name)
+        # Test if list = 3
+        if len(splitted_name) != 3:
+            print('[INFO] Cannot perform operation. Your name seems to be a '
+                    'non composed name: %s' % splitted_name)
+            return None
         # Pop middle name
         middle_name = splitted_name.pop(1)
         # Create composed name
