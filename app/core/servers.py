@@ -51,4 +51,4 @@ class Outlook(BaseServer):
     """ A server set to be used with Outlook
     """
     def __init__(self, user, password):
-        super().__init__('', 587, user, password)
+        super().__init__('SMTP.office365.com', 587, user, password)

@@ -2,10 +2,11 @@
     "python.testing.unittestArgs": [
         "-v",
         "-s",
-        "/emails_app/tests/",
+        "./app/tests/",
         "-p",
         "test_*.py"
     ],
     "python.testing.autoTestDiscoverOnSaveEnabled": true,
     "python.testing.unittestEnabled": true,
+    "restructuredtext.confPath": "",
 }
