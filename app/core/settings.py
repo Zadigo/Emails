@@ -4,12 +4,16 @@
 import os
 from datetime import datetime
 from secrets import token_hex
-from email_app.core.errors import ImproperlyConfiguredError
+
+from app.core.errors import ImproperlyConfiguredError
+
 
 class Configuration(dict):
     """This is the base class to configure the
     application. This returns a dictionary object
     that you can use order to update.
+
+    `filepath` is the `__file__` element
     """
     def __init__(self):
         # Root path for the project

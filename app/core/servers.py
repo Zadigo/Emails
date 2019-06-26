@@ -1,7 +1,8 @@
 import csv
 import smtplib
 from smtplib import SMTP
-from email_app.core.settings import Configuration
+
+from app.core.settings import Configuration
 
 
 class BaseServer:

@@ -5,14 +5,16 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from mimetypes import guess_type, read_mime_types
 
-from email_app.core.errors import NoServerError
-from email_app.core.servers import Gmail, Outlook
+from app.core.errors import NoServerError
+from app.core.servers import Gmail, Outlook
+from app.core.settings import Configuration
 
 
 class SendEmail:
     """Send an email using a server
     """
     server = Gmail
+    # config = Configuration
 
     def __init__(self, sender, receiver, subject, **kwargs):
         if self.server:
@@ -20,6 +22,7 @@ class SendEmail:
                 # Create a new server instance
                 # to be used
                 Klass = self.server('', '')
+                # Klass = self.server(self.config['USER'], self.config['PASSWORD'])
             else:
                 raise NoServerError('Server is not a callable. \
                             Received %s' % type(self.server))
