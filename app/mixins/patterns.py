@@ -1,4 +1,4 @@
-from email_app.patterns.constructor import UtilitiesMixin
+from app.patterns.constructor import UtilitiesMixin
 
 class PatternsMixin(UtilitiesMixin):
     """A basic helper to construct email

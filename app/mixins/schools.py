@@ -1,5 +1,5 @@
-from email_app.patterns.patterns import NamePatterns
-from email_app.mixins.fields import EmailField
+from app.patterns.patterns import NamePatterns
+from app.mixins.fields import EmailField
 
 class EDHEC(NamePatterns):
     pattern = 'nom.prenom'

@@ -1,5 +1,5 @@
-from email_app.patterns.constructor import NameConstructor
-from email_app.mixins.utils import UtilitiesMixin
+from app.patterns.constructor import NameConstructor
+from app.mixins.utils import UtilitiesMixin
 
 class NamePatterns(NameConstructor):
     """This is the base class used to represent the list

@@ -1,9 +1,9 @@
 import csv
 import re
 import os
-from email_app.core.errors import NoPatternError
-from email_app.mixins.utils import UtilitiesMixin
-from email_app.core.settings import Configuration
+from app.core.errors import NoPatternError
+from app.mixins.utils import UtilitiesMixin
+from app.core.settings import Configuration
 
 class FileOpener(UtilitiesMixin):
     """Open a file to construct a list of emails.
