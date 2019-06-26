@@ -1,7 +1,7 @@
 import unittest
 
-from email_app.core.settings import Configuration
-from email_app.patterns.constructor import NameConstructor
+from app.core.settings import Configuration
+from app.patterns.constructor import NameConstructor
 
 
 class TestConstructor(unittest.TestCase):

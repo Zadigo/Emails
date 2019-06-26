@@ -1,6 +1,8 @@
-from email_app.core.servers import BaseServer, Gmail, Outlook
 import os
 import unittest
+
+from app.core.servers import BaseServer, Gmail, Outlook
+
 
 class TestServers(unittest.TestCase):
     def setUp(self):

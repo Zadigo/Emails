@@ -1,5 +1,7 @@
 import unittest
-from email_app.mixins.utils import UtilitiesMixin
+
+from app.mixins.utils import UtilitiesMixin
+
 
 class TestPatterns(unittest.TestCase):
     def setUp(self):

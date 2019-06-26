@@ -1,6 +1,6 @@
 import unittest
 import os
-from email_app.core.settings import Configuration
+from app.core.settings import Configuration
 
 class TestConfiguration(unittest.TestCase):
     def setUp(self):

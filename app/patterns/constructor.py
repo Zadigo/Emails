@@ -223,7 +223,3 @@ class NameConstructor(FileOpener):
             # Search separator
             for pattern in kwargs['patterns']:
                 cls.search_separator(cls, name)
-
-# s = NameConstructor(Configuration()['DUMMY_FILE'])
-# s.pattern = 'nom.prenom'
-# print(s.construct_pattern())

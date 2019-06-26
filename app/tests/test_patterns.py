@@ -1,6 +1,8 @@
 import unittest
-from email_app.core.settings import Configuration
-from email_app.patterns.patterns import NamePatterns
+
+from app.core.settings import Configuration
+from app.patterns.patterns import NamePatterns
+
 
 class TestPatterns(unittest.TestCase):
     def setUp(self):
