@@ -11,23 +11,32 @@ class UtilitiesMixin:
     on names such as normalizing them etc.
     """
     def splitter(self, name):
-        """Create an array with the names by seperating
-        them. Therefore, `Eugénie Bouchard` becomes `['Eugénie', 'Bouchard']`.
+        """Create an array with a single name by splitting it.
+
+        Result
+        ------
+        
+        `Eugénie Bouchard` becomes `[Eugénie, Bouchard]`.
         """
         return name.split(' ')
 
     def normalize_name(self, name):
         """A helper function that normalizes a name to lowercase
-        and by stripping any whitespaces
+        and strips any whitespaces
         """
         return name.lower().strip()
 
     def flatten_name(self, name):
         r"""Replace all accents from a name and
-        normalize it: `Eugénie Bouchard` or `Eugénie Bouchard\s?`
+        normalize it.
+        
+        Result
+        ------
+
+        `Eugénie Bouchard` or `Eugénie Bouchard\s?`
         becomes `eugenie bouchard`.
 
-        NOTE - This will also normalize the name
+        NOTE: This method will also normalize the name
         """
         new_name=''
         accents = {
@@ -50,8 +59,7 @@ class UtilitiesMixin:
 
     def reverse(self, name):
         """Reverse a name from `[Eugenie, Bouchard]` to
-        `[Bouchard, Eugenie]`. This definition will also split
-        the name in order to reverse it
+        `[Bouchard, Eugenie]`.
         """
         return list(reversed(self.splitter(name)))
 
@@ -71,10 +79,16 @@ class UtilitiesMixin:
             return None
         # Pop middle name
         middle_name = splitted_name.pop(1)
-        # Create composed name
-        composed_name = ' '.join([middle_name, splitted_name[1]])
-        # ..
-        splitted_name[1] = composed_name
+        # Create composed name by joining parts
+        if change_position:
+            # .. Eugenie and Pauline
+            composed_name = ' '.join([splitted_name[0], middle_name])
+            splitted_name[0] = composed_name
+        else:
+            # .. Pauline and Bouchard
+            composed_name = ' '.join([middle_name, splitted_name[1]])
+            # ..
+            splitted_name[1] = composed_name
         # [Eugenie, Pauline Bouchard] or
         # [Eugenie Pauline, Bouchard]
         return splitted_name
