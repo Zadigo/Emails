@@ -1,4 +1,4 @@
-"""A utilities class for various tasks on name such as
+"""A utilities class for various tasks on names such as
 reversing or splitting names
 """
 
@@ -6,7 +6,9 @@ import re
 import collections
 
 class UtilitiesMixin:
-    """A mixin for various tasks on names
+    """A mixin which is used to extend classes
+    with various definitions on repetitive tasks
+    on names such as normalizing them etc.
     """
     def splitter(self, name):
         """Create an array with the names by seperating
@@ -48,7 +50,8 @@ class UtilitiesMixin:
 
     def reverse(self, name):
         """Reverse a name from `[Eugenie, Bouchard]` to
-        `[Bouchard, Eugenie]`
+        `[Bouchard, Eugenie]`. This definition will also split
+        the name in order to reverse it
         """
         return list(reversed(self.splitter(name)))
 

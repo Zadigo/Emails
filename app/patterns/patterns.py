@@ -5,6 +5,9 @@ class NamePatterns(NameConstructor):
     """This is the base class used to represent the list
     of emails that were created by the NameConstructor superclass.
 
+    Description
+    -----------
+
     By subclassing this class you will get a list of values
     such as :
         [
@@ -29,8 +32,11 @@ class NamePatterns(NameConstructor):
 class BasicNamePatterns(UtilitiesMixin):
     """Use this class to construct a list of of multiple emails 
     from scratch providing a person's `name` or a `filepath` 
-    containing a batch of names.
+    containing people's names
     
+    Description
+    -----------
+
     This will take a name and create patterns with all provided domains.
 
     Ex. with `Aurélie Konaté`
@@ -41,8 +47,17 @@ class BasicNamePatterns(UtilitiesMixin):
         ]
 
     You can use this class directly as an iterable to output the values to a given file:
-    > with open(file_path, 'w') as f:
-    >> f.writelines(BasicPatterns('Aurélie Konaté'))
+        with open(file_path, 'w') as f:
+            f.writelines(BasicPatterns('Aurélie Konaté'))
+
+    Parameters
+    ----------
+
+    `name_or_filepath` is a single string name or a file path containing a list of names
+    
+    `separators` contains a list of separators to use in order to create the email patterns
+
+    `domains` is the list of all the domains that you wish to use to construct the emails
     """
     def __init__(self, name_or_filepath, separators=['.', '-', '_'], 
                     domains=['gmail', 'outlook']):

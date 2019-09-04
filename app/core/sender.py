@@ -6,12 +6,24 @@ from email.mime.text import MIMEText
 from mimetypes import guess_type, read_mime_types
 
 from app.core.errors import NoServerError
-from app.core.servers import Gmail, Outlook
+from app.core.servers import Gmail
 from app.core.settings import Configuration
 
 
 class SendEmail:
     """Send an email using a server
+
+    Parameters
+    ----------
+
+    `sender` the email sending the message
+
+    `receiver` the email or emails receiving the message
+
+    `subject` of the message that you are sending 
+
+    Optional: `attachment` corresponds to the path of the object
+    that you want to attach to the email
     """
     server = Gmail
     # config = Configuration
@@ -20,7 +32,8 @@ class SendEmail:
         if self.server:
             if callable(self.server):
                 # Create a new server instance
-                # to be used
+                # to be used - The default server
+                # is the Gmail one
                 Klass = self.server('', '')
                 # Klass = self.server(self.config['USER'], self.config['PASSWORD'])
             else:
@@ -43,7 +56,7 @@ class SendEmail:
         message.attach(text)
         message.attach(html)
 
-        # Attachment
+        # Attachment - attach if any
         if 'attachment' in kwargs:
             message.attach(kwargs['attachment'])
 
@@ -57,7 +70,7 @@ class SendEmailWithAttachment(SendEmail):
         super().__init__('', '', 'Test', attachment=attachment)
 
     def create_attachment(self, path):
-        """Create an attachment
+        """Create an attachment using a local path
         """
         content = open(path, 'rb')
         # mime_type = guess_type(path)
@@ -66,8 +79,18 @@ class SendEmailWithAttachment(SendEmail):
         content.close()
         # Encode in Base64
         encode_base64(attachment)
-        # Filename
+        # Get the file's name
         filename = os.path.basename(path)
         attachment.add_header('Content-Disposition', "attachment; filename= %s" % filename)
         return attachment
-        
+
+    def create_attachments(self, paths):
+        if not isinstance(paths, (list, tuple)):
+            raise TypeError()
+
+        attachments = []
+
+        for path in paths:
+            attachments.append(self.create_attachment(path))
+
+        return attachments

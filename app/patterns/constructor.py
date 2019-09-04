@@ -6,13 +6,13 @@ from app.core.errors import NoPatternError
 from app.core.settings import Configuration
 from app.mixins.utils import UtilitiesMixin
 
+config = Configuration()
 
 class FileOpener(UtilitiesMixin):
     """Open a file to construct a list of emails.
     The file path can be a url or a path on your
     computer.
     """
-    config = Configuration()
 
     def __init__(self, file_path=None):
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -188,6 +188,8 @@ class NameConstructor(FileOpener):
             raise NoPatternError()
 
     def append_domain(self, name):
+        """Append a domain such as `@example.fr`
+        """
         return name + '@' + self.domain
 
     def search_separator(self, name, with_separator=True):
@@ -196,14 +198,14 @@ class NameConstructor(FileOpener):
         a pattern that has a separator or that has none
         """
         if with_separator:
-            for base_regex_pattern in self.config['BASE_REGEX_PATTERNS']['with_separator']:
+            for base_regex_pattern in config['BASE_REGEX_PATTERNS']['with_separator']:
                 captured_elements = re.search(base_regex_pattern, self.pattern)
                 # Break on first match
                 if captured_elements:
                     break
             return captured_elements.group(1)
         else:
-            for base_regex_pattern in self.config['BASE_REGEX_PATTERNS']['without_separator']:
+            for base_regex_pattern in config['BASE_REGEX_PATTERNS']['without_separator']:
                 captured_elements = re.search(base_regex_pattern, self.pattern)
                 # Break on first match
                 if captured_elements:
@@ -218,8 +220,9 @@ class NameConstructor(FileOpener):
     @classmethod
     def multiple_patterns(cls, **kwargs):
         # Construct a pattern
-        cls.construct_pattern(cls)
-        for name in kwargs['names']:
-            # Search separator
-            for pattern in kwargs['patterns']:
-                cls.search_separator(cls, name)
+        # cls.construct_pattern(cls)
+        # for name in kwargs['names']:
+        #     # Search separator
+        #     for pattern in kwargs['patterns']:
+        #         cls.search_separator(cls, name)
+        pass

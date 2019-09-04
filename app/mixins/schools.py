@@ -1,5 +1,40 @@
-from app.patterns.patterns import NamePatterns
+"""This module regroups a series of preset
+patterns related to schools in order to quickly
+create a series of patterns.
+
+Description
+-----------
+
+You can either subclass an already defined school or
+create a new school by subclass NamePatterns.
+
+For instance, improving a school would look like this:
+
+    class EDHEC2(EDHEC):
+        pattern = ''
+        domain = ''
+
+By calling EDHEC2(), you would create then a list of emails
+from the pattern and domain that you would have provided.
+
+Creating a new school is very simple:
+
+    class NewSchool(NamePattenrs):
+        pattern = ''
+        domain = ''
+
+John PENDENQUE - pendenquejohn@gmail.com
+"""
+
+import re
+from urllib.parse import urlparse
+
+import requests
+
+from app.core.errors import EmailerError
 from app.mixins.fields import EmailField
+from app.patterns.patterns import NamePatterns
+
 
 class EDHEC(NamePatterns):
     pattern = 'nom.prenom'
@@ -54,16 +89,25 @@ class Neoma(NamePatterns):
 
 class ISTC(NamePatterns):
     pattern = ''
+    domain = ''
 
 class Universities(NamePatterns):
     """This class is voluntarily empty
-    and can subclassed to create patterns
+    and can be subclassed to create patterns
     for universities
     """
     def from_url(self, url):
         if self._ping(url):
-            pass
-        pass
+            parsed_url = urlparse(url)[1]
+            domain = re.match(r'www\.(\S+)\.\w+', parsed_url)
+            if domain:
+                structured_domain = f'@{domain}' % domain.group(1)
+                return structured_domain
+            else:
+                print('[INFO] Could not parse domain from url: %s' % url)
+                return
+        else:
+            raise requests.exceptions.InvalidURL()
 
     @staticmethod
     def _ping(url):

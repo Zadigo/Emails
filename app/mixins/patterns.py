@@ -1,8 +1,35 @@
+"""This module implements a series of different mixins
+that can be used to construct email patterns.
+
+Description
+-----------
+
+The mixins are classes that can be subclassed in order
+to use their definitions.
+
+John PENDENQUE - pendenquejohn@gmail.com
+"""
+
 from app.patterns.constructor import UtilitiesMixin
 
 class PatternsMixin(UtilitiesMixin):
     """A basic helper to construct email
     pattern names quickly.
+
+    In order to use this class, subclass it
+    and call any of the definitions that it
+    contains.
+
+    Description
+    -----------
+
+        class Test(PatternsMixin):
+            pass
+
+        Test().name_dot_surname()
+
+    You can also override the definitions if you
+    wish to implement additional functionalities.
     """
     def __init__(self, name, reverse=False):
         # ['Eugénie', 'Bouchard'] ->
