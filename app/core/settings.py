@@ -64,24 +64,22 @@ class Configuration(dict):
         # of the servers
         # Extend the servers by appending a dictionnary
         # to it after importing the configuration file
-        self['SERVER_CONFIG'] = [
-            {
-                'default': {
-                    'name': 'google',
-                    'host': 'smtp.gmail.com',
-                    'port': 587,
-                    'user': self.get('USER'),
-                    'password': self.get('PASSWORD')
-                },
-                'outlook': {
-                    'name': 'outlook',
-                    'host': 'smtp.gmail.com',
-                    'port': 587,
-                    'user': self.get('USER'),
-                    'password': self.get('PASSWORD')
-                }
+        self['SERVER_CONFIG'] = {
+            'default': {
+                'name': 'google',
+                'host': 'smtp.gmail.com',
+                'port': 587,
+                'user': self.get('USER'),
+                'password': self.get('PASSWORD')
+            },
+            'outlook': {
+                'name': 'outlook',
+                'host': 'smtp.gmail.com',
+                'port': 587,
+                'user': self.get('USER'),
+                'password': self.get('PASSWORD')
             }
-        ]
+        }
 
         # Name used by default to create
         # a new file
@@ -91,30 +89,31 @@ class Configuration(dict):
         # created to test the features of the application
         self['DUMMY_FILE'] = os.path.join(self['DATA_DIR'], 'dummy.csv')
 
-    def __getitem__(self, obj):
-        if obj == 'SERVER_CONFIG':
-            self.check_server_parameters()
+    # def __getitem__(self, obj):
+    #     if obj == 'SERVER_CONFIG':
+    #         self.check_server_parameters()
 
-        # Make sure user and password are set
-        if obj == 'USER' or obj == 'PASSWORD':
-            if self.get(obj) is None:
-                raise ImproperlyConfiguredError('The %s setting was not configured properly.'
-                    ' Did you forget to set it before calling %s()?' % (obj, self.__class__.__name__))
-        return super().__getitem__(obj)
+    #     # Make sure user and password are set
+    #     if obj == 'USER' or obj == 'PASSWORD':
+    #         if self.get(obj) is None:
+    #             raise ImproperlyConfiguredError('The %s setting was not configured properly.'
+    #                 ' Did you forget to set it before calling %s()?' % (obj, self.__class__.__name__))
+    #     return super().__getitem__(obj)
 
     def check_server_parameters(self):
-        """[
+        """
+        {
             {
                 'default': ...,
                 '...': {
                     ...
                 }
             }
-        ]
+        }
         """
-        server_configs = self.get('SERVER_CONFIG')[0]
+        configs = self.get('SERVER_CONFIG')
         # We need a default server just in case
-        if 'default' not in server_configs:
+        if 'default' not in configs:
             raise ImproperlyConfiguredError("A default server was not found in the server setting's"
                 "configuration dictionnary.")
 
@@ -124,3 +123,37 @@ class Configuration(dict):
         #             or not 'password' in server_config:
         #         raise ImproperlyConfiguredError('Name, host, port, user or password is missing in %s'
         #             % server_config)
+
+    def set_credentials(self, user, password, server='default'):
+        """Set the credentials to use with the application
+
+        Parameters
+        ----------
+
+        `_for` accepts one main parameter which is `global` or
+        any other parameters corresponding to the name of the server
+        for which you want to set the credentials.
+        """
+        configs = self.get('SERVER_CONFIG')
+
+        credentials = {
+            'user': user,
+            'password': password
+        }
+
+        if server == 'global':
+            for config in configs:
+                config.update(credentials)
+
+        elif server == 'default':
+            configs[server].update(credentials)
+
+        else:
+            # Create an iterator that goes through the list
+            # of servers and check if the key matches to
+            # update the credentials of that server
+            pass
+
+        self.update({'SERVER_CONFIG': configs})
+
+configuration = Configuration()

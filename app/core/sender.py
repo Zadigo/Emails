@@ -7,8 +7,7 @@ from mimetypes import guess_type, read_mime_types
 
 from app.core.errors import NoServerError
 from app.core.servers import Gmail
-from app.core.settings import Configuration
-
+from zemailer.app.core.settings import configuration
 
 class SendEmail:
     """Send an email using a server
@@ -22,11 +21,13 @@ class SendEmail:
 
     `subject` of the message that you are sending 
 
+    `server` is the backend used to send the email(s)
+
     Optional: `attachment` corresponds to the path of the object
     that you want to attach to the email
     """
     server = Gmail
-    # config = Configuration
+    config = configuration['SERVER_CONFIG']
 
     def __init__(self, sender, receiver, subject, **kwargs):
         if self.server:
@@ -34,8 +35,10 @@ class SendEmail:
                 # Create a new server instance
                 # to be used - The default server
                 # is the Gmail one
-                Klass = self.server('', '')
-                # Klass = self.server(self.config['USER'], self.config['PASSWORD'])
+                # .. Klass = self.server('', '')
+                user = self.config['default']['user']
+                password = self.config['default']['password']
+                Klass = self.server(user, password)
             else:
                 raise NoServerError('Server is not a callable. \
                             Received %s' % type(self.server))
@@ -65,9 +68,9 @@ class SendEmail:
         Klass.smtp_connection.close()
 
 class SendEmailWithAttachment(SendEmail):
-    def __init__(self, file_path):
+    def __init__(self, sender, receiver, subject, file_path, **kwargs):
         attachment = self.create_attachment(file_path)
-        super().__init__('', '', 'Test', attachment=attachment)
+        super().__init__(sender, receiver, subject, attachment=attachment)
 
     def create_attachment(self, path):
         """Create an attachment using a local path
