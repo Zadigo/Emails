@@ -6,8 +6,8 @@ def construct_emails(func):
     """A decorator function that can be used to construct
     a list of emails from  a list of names.
 
-    How to
-    ------
+    Example
+    -------
 
     Suppose you have a function that returns a list or a tuple
     and from these returned values (which are names) you wish
@@ -33,13 +33,14 @@ def construct_emails(func):
         Finally, if you wish to reverse the position of the name and
         the surname, use the `reverse = True` parameter.
 
-    This decorator is an alternative to utilizing the classes and can
-    be used easily over any functions.
+    This decorator is an alternative to utilizing the email construction 
+    classes.
     """
-    def constructor(separator, *domains):
+    def constructor(separator, reverse_names=False, *domains):
         names = func()
         if not isinstance(names, (list, tuple)):
-            raise TypeError()
+            raise TypeError("Names should be a list"
+                "or a tuple of names. Received '%s'" % type(names))
 
         new_names = []
         new_name = ''
@@ -50,8 +51,10 @@ def construct_emails(func):
             new_name = utilities.flatten_name(name)
             splitted_name = new_name.split(' ')
 
-            # if reverse_names:
-            #     splitted_name.reverse()
+            # In case we want bouchard.eugenie
+            # instead of eugenie.bouchard
+            if reverse_names:
+                splitted_name.reverse()
 
             # Create the new name using the separator
             constructed_name = separator.join(splitted_name)
