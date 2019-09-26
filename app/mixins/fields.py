@@ -1,40 +1,18 @@
 import re
 
-# class EmailField(UtilitiesMixin):
-#     """Email object field
-#     """
-#     def __init__(self, nom, prenom, domaine, separator='.', regex=None):
-#         self.nom = nom
-#         self.prenom = prenom
-#         self.domaine = domaine
-#         self.separator = separator
-#         email = separator.join([self.nom, self.prenom])
-#         self.email = email + '@' + self.domaine
-
-#     def __setattr__(self, name, value):
-#         if name == 'nom' or name == 'prenom':
-#             value = self.flatten_name(value)
-#         return super().__setattr__(name, value)
-
-#     def __str__(self):
-#         return '%s(%s)' % (
-#             self.__class__.__name__,
-#             [self.nom, self.prenom, '@' + self.domaine]
-#         )
-
-#     def __repr__(self):
-#         return self.email
-
 class EmailField:
     """To create more complexe patterns, use this field
     with a regex pattern that will parse the given email.
 
-    For example to parse `test.google@gmail.com`, the regex
-    would be `^(\w+)(\.)(\w+)\@(gmail)\.(\w+)` with the captured
+    Example
+    -------
+
+    To parse `test.google@gmail.com`, the regex
+    would be `^(\\w+)(\\.)(\\w+)\\@(gmail)\\.(\\w+)` with the captured
     groups beeing `('test', '.', 'google', 'gmail', 'com')`.
 
-    This helper field is useful for parsing and creating patterns
-    off complexe email patterns.
+    This helper function is useful for parsing and creating patterns
+    off more complexe email patterns.
     """
     def __init__(self, email, pattern):
         is_match = re.search(pattern, email)
