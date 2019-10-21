@@ -1,9 +1,18 @@
 from app.patterns.constructor import NameConstructor
 from app.mixins.utils import UtilitiesMixin
+from zemailer.app.patterns.constructor import FileOpener
+import os
+import re
 
 class NamePatterns(NameConstructor):
     """This is the base class used to represent the list
     of emails that were created by the NameConstructor superclass.
+
+    Example
+    -------
+
+        class MyClass(NamePatters):
+            pattern = 'nom.prenom'
 
     Description
     -----------
@@ -32,7 +41,10 @@ class NamePatterns(NameConstructor):
 class BasicNamePatterns(UtilitiesMixin):
     """Use this class to construct a list of of multiple emails 
     from scratch providing a person's `name` or a `filepath` 
-    containing people's names
+    containing people's names.
+
+    Contrarily to the other classes, this class in particular does
+    not need to be subclassed to be used.
     
     Description
     -----------
@@ -62,6 +74,13 @@ class BasicNamePatterns(UtilitiesMixin):
     def __init__(self, name_or_filepath, separators=['.', '-', '_'], 
                     domains=['gmail', 'outlook']):
         patterns = []
+
+        # Check if the provided element is a path
+        # is_path = re.match(r'[\w+\:\w+\\+]+(\.\w+)', name_or_filepath)
+        # if is_path:
+        #     # Open the file
+        #     obj = FileOpener(name_or_filepath).csv_content
+        #     names = self.split_multiple(obj)
 
         # Split names
         name = self.splitter(self.flatten_name(name_or_filepath))
