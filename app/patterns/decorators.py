@@ -36,7 +36,7 @@ def construct_emails(func):
     This decorator is an alternative to utilizing the email construction 
     classes.
     """
-    def constructor(separator, reverse_names=False, *domains):
+    def constructor(separator, domains=['gmail.com'], reverse_names=False):
         names = func()
         if not isinstance(names, (list, tuple)):
             raise TypeError("Names should be a list"
@@ -53,13 +53,15 @@ def construct_emails(func):
 
             # In case we want bouchard.eugenie
             # instead of eugenie.bouchard
-            if reverse_names:
-                splitted_name.reverse()
+            # if reverse_names:
+            #     splitted_name.reverse()
 
             # Create the new name using the separator
             constructed_name = separator.join(splitted_name)
 
             for domain in domains:
+                # TODO: Maybe yield the names as a generator
+                # as opposed to the list below
                 new_names.append(constructed_name + '@' + domain)
 
         return new_names
