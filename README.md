@@ -35,17 +35,28 @@ SendEmail(email@gmail.com, email@gmail.com, subject)
 
 By executing the class, the .\_\_init\_\_(sender, receiver, subject, **kwargs) is called automatically, such as the server backend to perform the request.
 
+However, the main reason zemailer was created was to simplify and accelerate the construction of email addresses out of anybody's names.
 
 # Constructing emails
 
-There are many ways to construct an email with the application. First, you can import the preset patterns:
+There are many ways to construct an email with the application. The first easiest way is to import the numerous preset patters from the mixins:
 
 ```
-from app.mixins.schools import  EDHEC
+from zemailer.app.mixins.schools import  EDHEC
 
-EDHEC()
+EDHEC(file_path=None)
 ```
 
-This class would then search for a file that you would have provided and use the names that it contains to create a list of emails for this school.
+From there, you need to provide a file path containing a list of names in order to create a list of emails using the specific preset.
 
+You can easily override a preset by subclassing it:
+
+```
+class AnotherSchool(EDHEC):
+    pass
+```
+
+You can then override the `pattern` and the `domain` attributes.
+
+The pattern, is the style around which you wish to construct the email. For example __eugenie.bouchard__ or __eugenie-bouchard__ while the domain is self explanatory e.g. google.com.
     
