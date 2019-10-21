@@ -52,6 +52,7 @@ class BaseServer:
                 print(f'Logged in as {user} to {smtp_connection._host}.')
                 # return smtp_connection
                 self.smtp_connection = smtp_connection
+                
 
 class Gmail(BaseServer):
     """ A server set to be used with Gmail
