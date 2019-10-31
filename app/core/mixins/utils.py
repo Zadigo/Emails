@@ -1,14 +1,18 @@
 """A utilities class for various tasks on names such as
 reversing or splitting names
+
+author: pendenquejohn@gmail.com
 """
 
-import re
 import collections
+import re
+
+from app.core.messages import Info
+
 
 class UtilitiesMixin:
-    """A mixin which is used to extend classes
-    with various definitions on repetitive tasks
-    on names such as normalizing them etc.
+    """A mixin is used to extend classes with various definitions on 
+    repetitive tasks on names such as normalizing them etc.
     """
     def splitter(self, name):
         """Create an array with a single name by splitting it.
@@ -20,23 +24,37 @@ class UtilitiesMixin:
         """
         return name.split(' ')
 
+    def split_multiple(self, names):
+        """Split multiple names into arrays
+        """
+        if not isinstance(names, (list, tuple)):
+            raise TypeError('Names should be a list or a tuple')
+
+        for name in names:
+            yield name.split(' ')
+
     def normalize_name(self, name):
         """A helper function that normalizes a name to lowercase
         and strips any whitespaces
+
+        Example
+        -------
+
+            "Eugenie Bouchard " becomes "eugenie bouchard"
         """
         return name.lower().strip()
 
     def flatten_name(self, name):
-        r"""Replace all accents from a name and
+        """Replace all accents from a name and
         normalize it.
         
-        Result
+        Example
         ------
 
-        `Eugénie Bouchard` or `Eugénie Bouchard\s?`
-        becomes `eugenie bouchard`.
+            "Eugénie Bouchard" or "Eugénie Bouchard\\s?"
+            becomes `eugenie bouchard`.
 
-        NOTE: This method will also normalize the name
+            NOTE - This method will also normalize the name
         """
         new_name=''
         accents = {
@@ -58,24 +76,37 @@ class UtilitiesMixin:
         return self.normalize_name(new_name)
 
     def reverse(self, name):
-        """Reverse a name from `[Eugenie, Bouchard]` to
-        `[Bouchard, Eugenie]`.
+        """Reverse an array with names.
+
+        Example
+        -------
+        
+            [Eugenie, Bouchard] to [Bouchard, Eugenie]
         """
         return list(reversed(self.splitter(name)))
 
     def decompose(self, name, change_position=False):
-        """Work with composed names such as `Eugenie Pauline Bouchard`
-        to `Eugenie` - `Pauline Bouchard`.
+        """Structures composed names into two unique names
+
+        Example
+        -------
         
-        By using `change_position`,
-        you can get `Eugenie Pauline` - `Bouchard` instead
+            "Eugenie Pauline Bouchard" becomes "Eugenie" "Pauline Bouchard"
+
+            [Eugenie, Pauline Bouchard] or [Eugenie Pauline, Bouchard]
+
+        Parameters
+        ----------
+
+            change_position - changes the direction in which the composed name
+                              should appear. The default position is on the left.
         """
         # [Eugenie, Pauline, Bouchard]
         splitted_name = self.splitter(name)
         # Test if list = 3
         if len(splitted_name) != 3:
-            print('[INFO] Cannot perform operation. Your name seems to be a '
-                    'non composed name: %s' % splitted_name)
+            print(Info('Cannot perform operation. Your name seems to be a '
+                    'non composed name: %s') % name)
             return None
         # Pop middle name
         middle_name = splitted_name.pop(1)

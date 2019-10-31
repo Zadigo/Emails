@@ -2,37 +2,13 @@ import csv
 import os
 import re
 
-from app.core.errors import NoPatternError
-from app.core.settings import Configuration
+from app.core.file_opener import FileOpener
 from app.mixins.utils import UtilitiesMixin
 
-config = Configuration()
-
-class FileOpener(UtilitiesMixin):
-    """Open a file to construct a list of emails.
-    The file path can be a url or a path on your
-    computer.
-    """
-
-    def __init__(self, file_path=None):
-        with open(file_path, 'r', encoding='utf-8') as f:
-            csv_file = csv.reader(f)
-            csv_content = list(csv_file).copy()
-
-        # Pop the headers but keep
-        # them for later usage
-        self.headers = csv_content.pop(0)
-
-        for content in csv_content:
-            for i in range(len(content)):
-                content[i] = self.normalize_name(content[i])
-                
-        # Store the csv's content
-        self.csv_content = csv_content
 
 class NameConstructor(FileOpener):
-    """Subclass this class and build basic email
-    patterns such as `name.surname`.
+    """Subclass this class and build basic email patterns such 
+    as `name.surname`.
 
     Send a `pattern` as a string, ex. `name.surname`, that
     will be used to construct the email. You can explicitly
@@ -47,7 +23,8 @@ class NameConstructor(FileOpener):
     The `particle` variable can be used to construct emails
     such as `nom.prenom-bba`. It must be a tuple or a list
     containing the string to append and the separator:
-    ('bba', '-').
+
+        (bba, -)
     """
     pattern = ''
     domain = ''
@@ -185,7 +162,8 @@ class NameConstructor(FileOpener):
             else:
                 raise TypeError()
         else:
-            raise NoPatternError()
+            # raise NoPatternError()
+            raise Exception()
 
     def append_domain(self, name):
         """Append a domain such as `@example.fr`

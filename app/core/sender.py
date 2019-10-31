@@ -5,9 +5,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from mimetypes import guess_type, read_mime_types
 
+from app.core import initialized_settings
 from app.core.errors import NoServerError
 from app.core.servers import Gmail
 from zemailer.app.core.settings import configuration
+
 
 class SendEmail:
     """Send an email using a server

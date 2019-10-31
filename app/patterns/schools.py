@@ -31,8 +31,7 @@ from urllib.parse import urlparse
 
 import requests
 
-from app.core.errors import EmailerError
-from app.mixins.fields import EmailField
+from app.core.mixins.fields import EmailField
 from app.patterns.patterns import NamePatterns
 
 

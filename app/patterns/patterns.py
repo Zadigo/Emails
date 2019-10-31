@@ -1,8 +1,10 @@
-from app.patterns.constructor import NameConstructor
-from app.mixins.utils import UtilitiesMixin
-from zemailer.app.patterns.constructor import FileOpener
 import os
 import re
+
+from app.core.mixins.utils import UtilitiesMixin
+from app.patterns.constructor import NameConstructor
+from zemailer.app.core.file_opener import FileOpener
+
 
 class NamePatterns(NameConstructor):
     """This is the base class used to represent the list
@@ -11,7 +13,7 @@ class NamePatterns(NameConstructor):
     Example
     -------
 
-        class MyClass(NamePatters):
+        class MyClass(NamePatterns):
             pattern = 'nom.prenom'
 
     Description
@@ -75,14 +77,19 @@ class BasicNamePatterns(UtilitiesMixin):
                     domains=['gmail', 'outlook']):
         patterns = []
 
+        # BUG: For now, this class can only deal with a single 
+        # name and we need to find a way to implement multiple
+        # names...
         # Check if the provided element is a path
-        # is_path = re.match(r'[\w+\:\w+\\+]+(\.\w+)', name_or_filepath)
+        # is_path = re.match(r'(?:\\)(\w+)(?=(\.\w+))', name_or_filepath)
         # if is_path:
-        #     # Open the file
-        #     obj = FileOpener(name_or_filepath).csv_content
-        #     names = self.split_multiple(obj)
+        #     # Open the file, get the names and send them
+        #     # to be splitted in order to create the emails
+        #     obj = FileOpener(name_or_filepath)
+        #     names = self.split_multiple(obj.csv_content)
 
-        # Split names
+        # else:
+        # For single names, use this technique
         name = self.splitter(self.flatten_name(name_or_filepath))
 
         # Create occurences

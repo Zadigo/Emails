@@ -1,34 +1,31 @@
-class EmailerError(Exception):
-    def __init__(self):
-        pass
+class BaseError(Exception):
+    def __init__(self, message):
+        self.message = message
 
     def __str__(self):
         return self.__unicode__()
 
-    def __unicode__(self, text=None):
-        return text or 'Error'
-        
-class NoServerError(EmailerError):
-    def __init__(self, error_message):
-        self.error_message = error_message
-
     def __unicode__(self):
-        return super().__unicode__(self.error_message)
+        return self.message
 
-class NoPatternError(TypeError):
-    def __unicode__(self):
-        return 'A pattern was not provided. Did you forget to provide one? (ex. name.surname)'
+class FileTypeError(BaseError):
+    def __init__(self, message):
+        super().__init__(message)
 
-    def __str__(self, text=None):
-        return self.__unicode__()
-
-class ImproperlyConfiguredError(EmailerError):
-    """Error that can be raised when setting is not correct
-    in the configuration class
+class ImproperlyConfiguredError(BaseError):
+    """Error raised when a setting is not correctly configured
     """
     def __init__(self, message, **params):
-        self.message = message
-        self.params = params
+        super().__init__(message)
 
-    def __unicode__(self):
-        return super().__unicode__(text=self.message)
+class NoServerError(BaseError):
+    """Error raised when a server is not implemented
+    """
+    def __init__(self, message, **params):
+        super().__init__(message)
+
+class NoPatternError(BaseError):
+    """Error raised when a server is not implemented
+    """
+    def __init__(self, message, **params):
+        super().__init__(message)
