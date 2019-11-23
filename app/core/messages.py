@@ -8,3 +8,5 @@ class BaseMessages:
 class Info(BaseMessages):
     def __init__(self, message):
         super().__init__(message)
+
+from rest_framework.viewsets import ViewSet
