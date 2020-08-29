@@ -1,31 +1,30 @@
 import csv
+from io import FileIO, StringIO
 
-from app.core.errors import FileTypeError
-from app.core.mixins.utils import UtilitiesMixin
+from zemailer.core import errors
+from zemailer.core.mixins.utils import UtilitiesMixin
 
 
 class FileOpener(UtilitiesMixin):
-    """Open a file that can be used to construct a list of emails.
-
-    The file can be a .csv or .txt type.
+    """
+    Open a file that can be used to construct a list of emails
     """
 
-    def __init__(self, file_path=None):
+    opened_file = None
+
+    def __init__(self, file_path):
         if not file_path.endswith('csv'):
-            raise FileTypeError('Your file should be a csv file \
-                                    in order to improve file handling.')
+            raise errors.FileTypeError(('Your file should be a csv file '
+                                    'in order to improve file handling'))
 
         with open(file_path, 'r', encoding='utf-8') as f:
             csv_file = csv.reader(f)
             csv_content = list(csv_file).copy()
 
-        # Pop the headers but keep
-        # them for later usage
         self.headers = csv_content.pop(0)
 
         for content in csv_content:
             for i in range(len(content)):
                 content[i] = self.normalize_name(content[i])
                 
-        # Store the csv's content
         self.csv_content = csv_content

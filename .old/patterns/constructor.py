@@ -2,8 +2,8 @@ import csv
 import os
 import re
 
-from app.core.file_opener import FileOpener
-from app.mixins.utils import UtilitiesMixin
+from zemailer.core.file_opener import FileOpener
+from zemailer.core.mixins.utils import UtilitiesMixin
 
 
 class NameConstructor(FileOpener):
