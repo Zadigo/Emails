@@ -1,10 +1,11 @@
 import smtplib
+from functools import cached_property
 from smtplib import SMTP
 
-from zemailer.core.settings import configuration
+from zemailer.settings import configuration
 
 
-class BaseServer:
+class BaseEmailServer:
     """
     This is the base class used to create a
     an SMTP connection to a server.
@@ -36,7 +37,6 @@ class BaseServer:
             smtp_connection.ehlo()
 
             try:
-                # Login user with password
                 smtp_connection.login(user, password)
             except smtplib.SMTPAuthenticationError:
                 # Provided credentials are not good?
@@ -51,11 +51,14 @@ class BaseServer:
                 raise
             else:
                 print(f'Logged in as {user} to {smtp_connection._host}.')
-                # return smtp_connection
                 self.smtp_connection = smtp_connection
+
+    @cached_property
+    def get_connection(self):
+        return self.smtp_connection
                 
 
-class Gmail(BaseServer):
+class Gmail(BaseEmailServer):
     """
     A server set to be used with Gmail
 
@@ -70,7 +73,8 @@ class Gmail(BaseServer):
     def __init__(self, user, password):
         super().__init__('smtp.gmail.com', 587, user, password)
 
-class Outlook(BaseServer):
+
+class Outlook(BaseEmailServer):
     """ 
     A server set to be used with Outlook
     """

@@ -1,9 +1,3 @@
-"""A utilities class for various tasks on names such as
-reversing or splitting names
-
-author: pendenquejohn@gmail.com
-"""
-
 import collections
 import re
 
@@ -12,7 +6,7 @@ from zemailer.core.messages import Info
 
 class UtilitiesMixin:
     """
-    A mixin is used to extend classes with various definitions on 
+    Used to extend classes with various definitions on 
     repetitive tasks on names such as normalizing them etc.
     """
 
@@ -35,7 +29,7 @@ class UtilitiesMixin:
         for name in names:
             yield name.split(' ')
 
-    def normalize_name(self, name):
+    def normalize_value(self, name: str):
         """A helper function that normalizes a name to lowercase
         and strips any whitespaces
 
@@ -76,7 +70,7 @@ class UtilitiesMixin:
                 if letter == key:
                     letter = value
             new_name += letter
-        return self.normalize_name(new_name)
+        return self.normalize_value(new_name)
 
     def reverse(self, name):
         """Reverse an array with names.
@@ -126,3 +120,81 @@ class UtilitiesMixin:
         # [Eugenie, Pauline Bouchard] or
         # [Eugenie Pauline, Bouchard]
         return splitted_name
+
+    def multi_normalization(self, values: list):
+        return list(map(lambda x:  self.normalize_value(x), values))
+
+
+class PatternsMixin(UtilitiesMixin):
+    """A basic helper to construct email
+    pattern names quickly.
+
+    In order to use this class, subclass it
+    and call any of the definitions that it
+    contains
+    """
+
+    def __init__(self, name: str, reverse: bool=False):
+        # ['Eugénie', 'Bouchard'] ->
+        # ['eugenie', 'bouchard']
+        names = self.splitter(self.flatten_name(name))
+
+        # ['Eugénie', 'Bouchard'] ->
+        # ['Bouchard', 'Eugénie']
+        if reverse:
+            names.reverse()
+
+        self.names = names
+
+        # Even if he user decides to reverse,
+        # we let the variables name and surname
+        # as is
+        self.name = names[0]
+        self.surname = names[1]
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.names})'
+
+    def name_dot_surname(self):
+        """`eugenie.bouchard@domain.fr`
+        """
+        return f'{self.name}.{self.surname}'
+
+    def name_dash_surname(self):
+        """`eugenie-bouchard@domain.fr`
+        """
+        return f'{self.name}-{self.surname}'
+
+    def name_underscore_surname(self):
+        """`eugenie_bouchard@domain.fr`
+        """
+        return f'{self.name}_{self.surname}'
+
+    def nsurname(self):
+        """`ebouchard@domain.fr`
+        """
+        return f'{self.name[:1]}{self.surname}'
+
+    @property
+    def sname(self):
+        """`beugenie@domain.fr`
+        """
+        return f'{self.surname[:1]}{self.name}'
+
+    @property
+    def name_s(self):
+        """`boucharde@domain.fr`
+        """
+        return f'{self.name}{self.surname[:1]}'
+
+    @property
+    def just_name(self):
+        """`eugenie@domain.fr`
+        """
+        return self.name
+
+    @property
+    def just_surname(self):
+        """`bouchard@domain.fr`
+        """
+        return self.surname

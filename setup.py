@@ -1,5 +1,6 @@
-# #!/bin/bash
-# # -*- coding: utf-8 -*-
+#!/bin/bash
+# -*- coding: utf-8 -*-
+
 # import codecs
 # import os
 # import re
@@ -36,23 +37,23 @@
 #     ]
 # )
 
-import csv
+# import csv
 
-from zemailer.app.patterns.decorators import construct_emails
+# from zemailer.app.patterns.decorators import construct_emails
 
-p = 'C:\\Users\\Zadigo\\Documents\\Apps\\zemailer\\app\data\\ecommerce_list.csv'
-t = 'C:\\Users\\Zadigo\\Documents\\Apps\\zemailer\\app\data\\test.txt'
+# p = 'C:\\Users\\Zadigo\\Documents\\Apps\\zemailer\\app\data\\ecommerce_list.csv'
+# t = 'C:\\Users\\Zadigo\\Documents\\Apps\\zemailer\\app\data\\test.txt'
 
-@construct_emails
-def emails():
-    f = open(p, 'r', encoding='utf-8')
-    values = list(csv.reader(f))
-    f.close()
-    return values
+# @construct_emails
+# def emails():
+#     f = open(p, 'r', encoding='utf-8')
+#     values = list(csv.reader(f))
+#     f.close()
+#     return values
 
-values = emails('.', domains=['gmail.com', 'outlook.com', 'yahoo.com'])
-m = open(t, 'w', encoding='utf-8')
-for value in values:
-    m.writelines(value)
-    m.writelines('\n')
-m.close()
+# values = emails('.', domains=['gmail.com', 'outlook.com', 'yahoo.com'])
+# m = open(t, 'w', encoding='utf-8')
+# for value in values:
+#     m.writelines(value)
+#     m.writelines('\n')
+# m.close()

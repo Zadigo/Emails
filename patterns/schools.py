@@ -23,51 +23,53 @@ Creating a new school is very simple:
     class NewSchool(NamePattenrs):
         pattern = ''
         domain = ''
-
-John PENDENQUE - pendenquejohn@gmail.com
 """
 
 import re
 from urllib.parse import urlparse
 
 import requests
-
-# from zemailer.core.mixins.fields import EmailField
-from zemailer.patterns.algorithms import Names
+from zemailer.patterns.algorithms import NamesMixin
 
 
-class EDHEC(Names):
-    pattern = 'nom.prenom'
+class EDHEC(NamesMixin):
+    # pattern = 'nom.prenom'
+    pattern = 'surname.name'
     domain = ''
 
-
-class HEC(Names):
-    pattern = ['nomp', 'nom']
+class HEC(NamesMixin):
+    # pattern = ['nomp', 'nom']
+    pattern = ['surnamen', 'surname']
     domain = 'hec.fr'
+    
 
-
-class EMLyon(Names):
-    pattern = 'nom.prenom'
+class EMLyon(NamesMixin):
+    # pattern = 'nom.prenom'
+    pattern = 'surname.name'
     domain = 'em-lyon.com'
 
 
-class SKEMA(Names):
-    pattern = 'prenom.nom'
+class SKEMA(NamesMixin):
+    # pattern = 'prenom.nom'
+    pattern = 'surname.name'
     domain = 'skema.edu'
 
 
-class PolytechParis(Names):
-    pattern = 'prenom.nom'
+class PolytechParis(NamesMixin):
+    # pattern = 'prenom.nom'
+    pattern = 'name.surname'
     domain = 'polytechnique.edu'
 
 
-class ESCP(Names):
-    pattern = 'pnom'
+class ESCP(NamesMixin):
+    # pattern = 'pnom'
+    pattern = 'nsurname'
     domain = 'escpeurope.eu'
 
 
-class CentraleParis(Names):
-    pattern = 'nom.prenom'
+class CentraleParis(NamesMixin):
+    # pattern = 'nom.prenom'
+    pattern = 'surname.name'
     domain = ''
 
 
@@ -75,34 +77,39 @@ class CentraleLille(CentraleParis):
     domain = ''
 
 
-class HEI(Names):
-    pattern = 'nom.prenom'
+class HEI(NamesMixin):
+    # pattern = 'nom.prenom'
+    pattern = 'surname.name'
     domain = ''
 
 
-class KEDGE(Names):
-    pattern = 'prenom.nom'
+class KEDGE(NamesMixin):
+    # pattern = 'prenom.nom'
+    pattern = 'surname.name'
     domain = 'kedgebs.com'
 
 
-class ISCOM(Names):
-    pattern = 'prenom.nom'
+class ISCOM(NamesMixin):
+    # pattern = 'prenom.nom'
+    pattern = 'surname.name'
     domain = 'iscom.fr'
 
 
-class ESSEC(Names):
+class ESSEC(NamesMixin):
     pattern = ['nom', 'nomp']
     domain = 'essec.edu'
 
 
-class Neoma(Names):
-    pattern = 'prenom.nom'
+class Neoma(NamesMixin):
+    # pattern = 'prenom.nom'
+    pattern = 'surname.name'
     domain = 'neoma.fr'
 
 
-class ISTC(Names):
+class ISTC(NamesMixin):
     pattern = ''
     domain = ''
+
 
 # class Universities(Names):
 #     """This class is voluntarily empty

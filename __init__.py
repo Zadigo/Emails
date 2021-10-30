@@ -6,5 +6,5 @@
 # # from zemailer.app.patterns.constructor import NameConstructor
 # from zemailer.app.patterns.patterns import BasicNamePatterns, NamePatterns
 
-from zemailer.core import settings
-from zemailer.core.settings import configuration
+# from zemailer.core import settings
+# from zemailer.core.settings import configuration
