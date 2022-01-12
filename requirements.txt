@@ -1,2 +1,2 @@
 beautifulsoup4==4.7.1
-pipenv==2018.11.26
+pipenv==2022.1.8
