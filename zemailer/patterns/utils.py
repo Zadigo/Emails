@@ -1,16 +1,20 @@
+import csv
 import unicodedata
 
+EMAIL_PATTERNS = [
+    'firstname.lastname',
+    'lastname.firstname',
+    'firstnamelastname',
+    'f1lastname',
+    'lastnamef1',
+    'firstname',
+    'firstnamel1',
+    'lastname',
+    'f1.lastname',
+    'l1.firstname'
+]
 
 class Patterns:
-    patterns = [
-        'firstname.lastname',
-        'lastname.firstname',
-        'firstnamelastname',
-        'flastname',
-        'lastname',
-        'firstname',
-        'firstnamel'
-    ]
     separators = ['.', '-' '_']
     domain = 'gmail'
     particle = 'com'
@@ -19,12 +23,12 @@ class Patterns:
     def __init__(self, pattern):
         self.pattern = None
         self.pattern_location = None
-        pattern = list(filter(lambda x: pattern == x, self.patterns))
+        pattern = list(filter(lambda x: pattern == x, EMAIL_PATTERNS))
         if not pattern:
             raise ValueError()
         if pattern:
             self.pattern = pattern[-1]
-            self.pattern_location = self.patterns.index(self.pattern)
+            self.pattern_location = EMAIL_PATTERNS.index(self.pattern)
         self._items = []
         self._firstname = None
         self._lastname = None
@@ -52,14 +56,26 @@ class Patterns:
     def _substitute(self, firstname, lastname):
         firstname, lastname = self.clean(firstname, lastname)
         pattern = self.pattern
-        if self.pattern == 'flastname':
+        if self.pattern == 'f1lastname':
             firstname = firstname[0]
-            first_value = pattern.replace('f', firstname)
+            first_value = pattern.replace('f1', firstname)
             second_value = first_value.replace('lastname', lastname)
-        elif self.pattern == 'firstnamel':
+        elif self.pattern == 'firstnamel1':
             lastname = lastname[0]
             first_value = pattern.replace('firstname', firstname)
-            second_value = first_value.replace('l', lastname)
+            second_value = first_value.replace('l1', lastname)
+        elif self.pattern == 'lastnamef1':
+            firstname = firstname[0]
+            first_value = pattern.replace('lastname', lastname)
+            second_value = first_value.replace('f1', firstname)
+        elif self.pattern == 'f1.lastname':
+            firstname = firstname[0]
+            first_value = pattern.replace('lastname', lastname)
+            second_value = first_value.replace('f1', firstname)
+        elif self.pattern == 'l1.firstname':
+            lastname = lastname[0]
+            first_value = pattern.replace('firstname', lastname)
+            second_value = first_value.replace('l1', firstname)
         else:
             first_value = pattern.replace('firstname', firstname)
             second_value = first_value.replace('lastname', lastname)
@@ -99,5 +115,24 @@ class Email(Patterns):
         return str(obj) in self.email
 
 
-p = Email('firstname.lastname', 'John', 'Viré')
-print(p)
+class EmailGenerator:
+    emails = []
+    def __init__(self, firstname, lastname):
+        for pattern in EMAIL_PATTERNS:
+            self.emails.append(Email(pattern, firstname, lastname))
+
+    def __iter__(self):
+        return iter(self.emails)
+    
+    def to_file(self, name=None):
+        with open('test.csv', mode='w', encoding='utf-8', newline='\n') as f:
+            emails = map(lambda x: [x], self.emails)
+            writer = csv.writer(f)
+            writer.writerows(emails)
+
+# p = Email('lastname', 'John', 'Viré')
+# print(p)
+
+
+e = EmailGenerator('Julie', 'Gar')
+e.to_file()
