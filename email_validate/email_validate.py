@@ -98,3 +98,5 @@ def updater(auth_key=None):
         ++++++++++++++++++++++++++++++++++++++++"""
         print(output)
     print("todo")
+
+validate('j.pendenque@sad-marketing.com')
