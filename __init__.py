@@ -1,3 +1,4 @@
+
 # from zemailer.app.core import Settings, initialized_settings
 # from zemailer.app.core.mixins.patterns import PatternsMixin
 # from zemailer.app.core.sender import SendEmail, SendEmailWithAttachment
