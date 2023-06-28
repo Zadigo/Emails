@@ -1,7 +1,12 @@
-from smtplib import SMTP, SMTPResponseException, SMTPServerDisconnected
+
+from smtplib import SMTP, SMTPResponseException, SMTPServerDisconnected, SMTPNotSupportedError
 
 
-class SMTPCheck(SMTP):
+class SMTPVerifier(SMTP):
+    """
+    A class that checks an email against a set of MX records
+    """
+    
     def __init__(self, local_hostname, timeout, debug, sender, recip):
         super().__init__(local_hostname=local_hostname, timeout=timeout)
         debug_level = 2 if debug else False
@@ -9,10 +14,14 @@ class SMTPCheck(SMTP):
 
         self._sender = sender
         self._recip = recip
-        self.errors = {}
-        self.sock = None
         self._command = None
         self._host = None
+        self.errors = {}
+        self.sock = None
+
+    def putcmd(self, cmd, args=''):
+        self._command = f'{cmd} {args}' if args else cmd
+        super().putcmd(cmd, args)
 
     def mail(self, sender, options=[]):
         """
@@ -25,8 +34,18 @@ class SMTPCheck(SMTP):
             print(code, message)
             raise
         return code, message
-    
-    def rcpt(self, recip, options = ()):
+
+    def starttls(self, *args, **kwargs):
+        try:
+            super().starttls(*args, **kwargs)
+        except SMTPNotSupportedError:
+            # The server does not support the STARTTLS extension
+            pass
+        except RuntimeError:
+            # SSL/TLS support is not available to your Python interpreter
+            pass
+
+    def rcpt(self, recip, options=()):
         """
         Like `smtplib.SMTP.rcpt`, but handle negative SMTP server
         responses directly.
@@ -40,7 +59,7 @@ class SMTPCheck(SMTP):
             print(code, message)
             raise
         return code, message
-    
+
     def quit(self):
         """
         Like `smtplib.SMTP.quit`, but make sure that everything is
@@ -59,7 +78,7 @@ class SMTPCheck(SMTP):
         self._host = host
         try:
             code, message = super().connect(
-                host=host, 
+                host=host,
                 port=port,
                 source_address=source_address
             )
@@ -75,42 +94,42 @@ class SMTPCheck(SMTP):
         """
         Run the check for one SMTP server.
 
-        Return `True` on positive result.
+        Returns `True` on positive result.
 
-        Return `False` on ambiguous result (4xx response to `RCPT TO`),
+        Returns `False` on ambiguous result (4xx response to `RCPT TO`),
         while collecting the error message for later use.
-
-        Raise `AddressNotDeliverableError`. on negative result.
         """
         try:
             self.connect(host=record)
             self.starttls()
             self.ehlo_or_helo_if_needed()
+            # Checks the email against the mx record
             self.mail(sender=self._sender.restructure)
             code, message = self.rcpt(recip=self._recip.restructure)
         except SMTPServerDisconnected as e:
             return False
         except SMTPResponseException as e:
             if e.smtp_code >= 500:
-                raise
+                raise Exception(f'Communication error: {self._host} / {message}')
             else:
-                pass
-                # self.__temporary_errors[self._host] = smtp_message
+                self.errors[self._host] = message
             return False
         finally:
             self.quit()
         return code < 400
-    
+
     def check_multiple(self, records):
         result = [self.check(x) for x in records]
         if self.errors:
-            pass
+            raise Exception(f'Host errors: {self.errors}')
         return result
 
 
-# c = SMTPCheck('kylie@california-bliss.fr')
-# c.check('kylie@california-bliss.fr')
 def smtp_check(email, mx_records, timeout=10, helo_host=None, from_address=None, debug=False):
+    """
+    Returns `True` as soon as the any of the given server accepts the
+    recipient address
+    """
     sender = from_address or email
-    instance = SMTPCheck(helo_host, timeout, debug, sender, email)
+    instance = SMTPVerifier(helo_host, timeout, debug, sender, email)
     return instance.check_multiple(mx_records)
