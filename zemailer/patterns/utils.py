@@ -97,6 +97,8 @@ class Patterns:
 
 
 class Email(Patterns):
+    """Represents a generated email address"""
+
     def __init__(self, pattern, firstname, lastname):
         super().__init__(pattern)
         self.email = self.as_email(firstname, lastname)
@@ -108,23 +110,51 @@ class Email(Patterns):
         return self.email
     
     def __hash__(self):
-        return hash([self.email, self.pattern, self.pattern_location])
+        user, domain = self.deconstruct
+        return hash([self.email, user, domain, self.pattern])
     
     def __eq__(self, obj):
         return self.email == str(obj)
     
     def __contains__(self, obj):
         return str(obj) in self.email
-
+    
+    @property
+    def deconstruct(self):
+        user, domain = self.email.rsplit('@', maxsplit=1)
+        return user, domain
+    
+    @property
+    def reconstruct(self):
+        return '@'.join(self.deconstruct)
+        
 
 class EmailGenerator:
+    """Generate a list of potential business emails
+    from a firstname and a lastname"""
+
     emails = []
     def __init__(self, firstname, lastname):
         for pattern in EMAIL_PATTERNS:
             self.emails.append(Email(pattern, firstname, lastname))
 
+    def __repr__(self):
+        return f'<{self.__class__.__name__} {self.emails}>'
+
     def __iter__(self):
         return iter(self.emails)
+    
+    def __getitem__(self, index):
+        return self.emails[index]
+    
+    def __len__(self):
+        return len(self.emails)
+    
+    def __enter__(self, *args, **kwargs):
+        return self.emails
+    
+    def __exit__(self):
+        return False
     
     def to_file(self, name=None):
         with open('test.csv', mode='w', encoding='utf-8', newline='\n') as f:
@@ -132,3 +162,4 @@ class EmailGenerator:
             writer = csv.writer(f)
             writer.writerows(emails)
 
+print(EmailGenerator('Aurélie', 'Pon'))
