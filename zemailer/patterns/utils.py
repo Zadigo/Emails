@@ -161,5 +161,3 @@ class EmailGenerator:
             emails = map(lambda x: [x], self.emails)
             writer = csv.writer(f)
             writer.writerows(emails)
-
-print(EmailGenerator('Aurélie', 'Pon'))
