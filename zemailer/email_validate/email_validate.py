@@ -2,14 +2,15 @@
 from logging import getLogger
 from typing import Optional
 
-from .dns_check import dns_check
-from .domainlist_check import domainlist_check
-from .email_address import EmailAddress
-from .exceptions import (
-    AddressFormatError, EmailValidationError, FromAddressFormatError,
-    SMTPTemporaryError)
-from .regex_check import regex_check
-from .smtp_check import smtp_check
+from zemailer.email_validate.dns_check import dns_check
+from zemailer.email_validate.domainlist_check import domainlist_check
+from zemailer.email_validate.email_address import EmailAddress
+from zemailer.email_validate.exceptions import (AddressFormatError,
+                                                EmailValidationError,
+                                                FromAddressFormatError,
+                                                SMTPTemporaryError)
+from zemailer.email_validate.regex_check import regex_check
+from zemailer.email_validate.smtp_check import smtp_check
 
 LOGGER = getLogger(name=__name__)
 

@@ -2,10 +2,13 @@ from smtplib import SMTP, SMTPResponseException, SMTPServerDisconnected
 
 
 class SMTPCheck(SMTP):
-    def __init__(self, local_hostname, timeout=None, debug=False, sender=None, recipient=None):
+    def __init__(self, local_hostname, timeout, debug, sender, recip):
         super().__init__(local_hostname=local_hostname, timeout=timeout)
+        debug_level = 2 if debug else False
+        self.set_debuglevel(debug_level)
+
         self._sender = sender
-        self._recip = recipient
+        self._recip = recip
         self.errors = {}
         self.sock = None
         self._command = None
@@ -68,7 +71,7 @@ class SMTPCheck(SMTP):
                 raise
         return code, message
 
-    def check(self, host):
+    def check(self, record):
         """
         Run the check for one SMTP server.
 
@@ -80,11 +83,11 @@ class SMTPCheck(SMTP):
         Raise `AddressNotDeliverableError`. on negative result.
         """
         try:
-            self.connect(host=host)
+            self.connect(host=record)
             self.starttls()
             self.ehlo_or_helo_if_needed()
-            self.mail(sender=self._sender.ace)
-            code, message = self.rcpt(recip=self._recip.ace)
+            self.mail(sender=self._sender.restructure)
+            code, message = self.rcpt(recip=self._recip.restructure)
         except SMTPServerDisconnected as e:
             return False
         except SMTPResponseException as e:
@@ -97,7 +100,17 @@ class SMTPCheck(SMTP):
         finally:
             self.quit()
         return code < 400
+    
+    def check_multiple(self, records):
+        result = [self.check(x) for x in records]
+        if self.errors:
+            pass
+        return result
 
 
-c = SMTPCheck('kylie@california-bliss.fr')
-c.check('kylie@california-bliss.fr')
+# c = SMTPCheck('kylie@california-bliss.fr')
+# c.check('kylie@california-bliss.fr')
+def smtp_check(email, mx_records, timeout=10, helo_host=None, from_address=None, debug=False):
+    sender = from_address or email
+    instance = SMTPCheck(helo_host, timeout, debug, sender, email)
+    return instance.check_multiple(mx_records)

@@ -2,14 +2,14 @@
 from dns.exception import Timeout
 from dns.rdatatype import MX as rdtype_mx
 from dns.rdtypes.ANY.MX import MX
-from dns.resolver import (
-    NXDOMAIN, YXDOMAIN, Answer, NoAnswer, NoNameservers, resolve)
+from dns.resolver import (NXDOMAIN, YXDOMAIN, Answer, NoAnswer, NoNameservers,
+                          resolve)
 
 from .constants import HOST_REGEX
 from .email_address import EmailAddress
-from .exceptions import (
-    DNSConfigurationError, DNSTimeoutError, DomainNotFoundError, NoMXError,
-    NoNameserverError, NoValidMXError)
+from .exceptions import (DNSConfigurationError, DNSTimeoutError,
+                         DomainNotFoundError, NoMXError, NoNameserverError,
+                         NoValidMXError)
 
 
 def _get_mx_records(domain: str, timeout: int) -> Answer:
