@@ -2,7 +2,7 @@ from smtplib import SMTP, SMTPResponseException, SMTPServerDisconnected
 
 
 class SMTPCheck(SMTP):
-    def __init__(self, local_hostname, timeout, debug, sender, recipient):
+    def __init__(self, local_hostname, timeout=None, debug=False, sender=None, recipient=None):
         super().__init__(local_hostname=local_hostname, timeout=timeout)
         self._sender = sender
         self._recip = recipient
@@ -11,7 +11,7 @@ class SMTPCheck(SMTP):
         self._command = None
         self._host = None
 
-    def mail(self, sender: str, options: tuple = ()):
+    def mail(self, sender, options=[]):
         """
         Like `smtplib.SMTP.mail`, but raise an appropriate exception on
         negative SMTP server response.
@@ -23,7 +23,7 @@ class SMTPCheck(SMTP):
             raise
         return code, message
     
-    def rcpt(self, recip: str, options: tuple = ()):
+    def rcpt(self, recip, options = ()):
         """
         Like `smtplib.SMTP.rcpt`, but handle negative SMTP server
         responses directly.
@@ -68,7 +68,7 @@ class SMTPCheck(SMTP):
                 raise
         return code, message
 
-    def check_server(self, host):
+    def check(self, host):
         """
         Run the check for one SMTP server.
 
@@ -91,8 +91,13 @@ class SMTPCheck(SMTP):
             if e.smtp_code >= 500:
                 raise
             else:
-                self.__temporary_errors[self._host] = smtp_message
+                pass
+                # self.__temporary_errors[self._host] = smtp_message
             return False
         finally:
             self.quit()
         return code < 400
+
+
+c = SMTPCheck('kylie@california-bliss.fr')
+c.check('kylie@california-bliss.fr')
