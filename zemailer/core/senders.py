@@ -1,4 +1,5 @@
 import os
+import smtplib
 from email.encoders import encode_base64
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
@@ -7,8 +8,9 @@ from mimetypes import guess_type, read_mime_types
 
 from zemailer.core.backends import Gmail
 from zemailer.core.exceptions import NoServerError
-from zemailer.settings import configuration
-from zemailer.utils.template_loader import render_template
+
+# from zemailer.settings import configuration
+# from zemailer.utils.template_loader import render_template
 
 
 class TemplateMixin:
@@ -71,8 +73,12 @@ class SendEmail:
             message.attach(kwargs['attachment'])
 
         # ..Send email
-        Klass.smtp_connection.sendmail(sender, receiver, message.as_string())
-        Klass.smtp_connection.close()
+        try:
+            Klass.smtp_connection.sendmail(sender, receiver, message.as_string())
+        except smtplib.SMTPException as e:
+            print(e)
+        finally:
+            Klass.smtp_connection.close()
 
 
 class SendEmailWithAttachment(SendEmail):

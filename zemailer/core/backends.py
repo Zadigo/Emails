@@ -2,7 +2,7 @@ import smtplib
 from functools import cached_property
 from smtplib import SMTP
 
-from zemailer.settings import configuration
+# from zemailer.settings import configuration
 
 
 class BaseEmailServer:

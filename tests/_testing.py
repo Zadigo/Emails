@@ -22,5 +22,5 @@ De plus, notre partenariat avec les principales marques nous permet de vous offr
 En résumé, chez Keppler, nous sommes passionnés par la gastronomie et nous sommes déterminés à fournir aux professionnels de la cuisine des équipements haut de gamme qui répondent à leurs exigences les plus élevées. Contactez-nous dès aujourd'hui pour discuter de vos besoins en équipements de cuisine et laissez-nous vous aider à créer une cuisine d'exception pour votre établissement à Lille. Ensemble, nous pouvons faire de votre vision culinaire une réalité.
 """
 # for email in e:
-s = SendEmail('inglish.contact@gmail.com',
-              'j.pendenque@sad-marketing.com', subject, email_body=body)
+s = SendEmail('inglishgoogle.contact@gmail.com',
+              'kylie.schuyler@california-bliss.fr', subject, email_body=body)
