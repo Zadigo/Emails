@@ -33,18 +33,21 @@ class SendEmail:
     """
     server = Gmail
 
-    def __init__(self, sender: str, receiver: str, subject: str, 
-                 email_body: str=None, html_body: str=None, **kwargs):
+    def __init__(self, sender, receiver, subject,
+                 email_body=None, html_body=None, **kwargs):
         if self.server:
             if callable(self.server):
-                defaults = configuration.SERVER_CONFIG['default']
-                user = defaults['user']
-                password = defaults['password']
-                Klass = self.server(user, password)
+                # defaults = configuration.SERVER_CONFIG['default']
+                # user = defaults['user']
+                # password = defaults['password']
+                # Klass = self.server(user, password)
+                Klass = self.server('inglish.contact@gmail.com', 'czvbekcrgzwswabk')
             else:
-                raise NoServerError(f"Server is not a callable. Received {self.server}")
+                raise NoServerError(
+                    f"Server is not a callable. Received {self.server}")
         else:
-            raise NoServerError("Server was not provided. Did you forget to register a server?")
+            raise NoServerError(
+                "Server was not provided. Did you forget to register a server?")
 
         # Create a MIME object
         message = MIMEMultipart('alternative')
@@ -89,7 +92,8 @@ class SendEmailWithAttachment(SendEmail):
         encode_base64(attachment)
         # Get the file's name
         filename = os.path.basename(path)
-        attachment.add_header('Content-Disposition', f"attachment; filename= {filename}")
+        attachment.add_header('Content-Disposition',
+                              f"attachment; filename= {filename}")
         return attachment
 
     def create_attachments(self, paths):
@@ -105,7 +109,8 @@ class SendEmailWithAttachment(SendEmail):
 
 
 class SendEmailFromTemplate(SendEmail):
-    def __init__(self, sender: str, receiver: str, subject: str, email_template:str, html_template:str, context:dict):
+    def __init__(self, sender: str, receiver: str, subject: str, email_template: str, html_template: str, context: dict):
         email_body = render_template(email_template, context=context)
         html_body = render_template(html_template, context=context)
-        super().__init__(sender, receiver, subject, email_body=email_body, html_body=html_body)
+        super().__init__(sender, receiver, subject,
+                         email_body=email_body, html_body=html_body)

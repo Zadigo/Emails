@@ -14,10 +14,11 @@ EMAIL_PATTERNS = [
     'l1.firstname'
 ]
 
+
 class Patterns:
-    separators = ['.', '-' '_']
     domain = 'gmail'
     particle = 'com'
+    separators = ['.', '-' '_']
     seperator = '.'
 
     def __init__(self, pattern):
@@ -43,6 +44,7 @@ class Patterns:
         def remove_accents(text):
             nfkd_form = unicodedata.normalize('NFKD', text)
             return nfkd_form.encode('ASCII', 'ignore')
+        
         clean_tokens = map(remove_accents, lowered_tokens)
         tokens = map(lambda x: x.decode('utf-8'), clean_tokens)
         return list(tokens)
@@ -130,9 +132,3 @@ class EmailGenerator:
             writer = csv.writer(f)
             writer.writerows(emails)
 
-# p = Email('lastname', 'John', 'Viré')
-# print(p)
-
-
-e = EmailGenerator('Julie', 'Gar')
-e.to_file()
