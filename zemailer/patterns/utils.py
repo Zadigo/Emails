@@ -1,4 +1,5 @@
 import csv
+from itertools import permutations
 import unicodedata
 
 EMAIL_PATTERNS = [
@@ -18,42 +19,83 @@ EMAIL_PATTERNS = [
 class Patterns:
     domain = 'gmail'
     particle = 'com'
-    separators = ['.', '-' '_']
+    separators = ['.', '-', '_']
     seperator = '.'
 
     def __init__(self, pattern):
         self.pattern = None
         self.pattern_location = None
+
         pattern = list(filter(lambda x: pattern == x, EMAIL_PATTERNS))
         if not pattern:
             raise ValueError()
+
         if pattern:
             self.pattern = pattern[-1]
             self.pattern_location = EMAIL_PATTERNS.index(self.pattern)
+
         self._items = []
         self._firstname = None
         self._lastname = None
 
     def __repr__(self):
         return f'<Pattern: {self.pattern}>'
-    
+
     @staticmethod
     def clean(firstname, lastname):
-        lowered_tokens = map(lambda x: x.lower().strip(), [firstname, lastname])
+        lowered_tokens = map(
+            lambda x: x.lower().strip(),
+            [firstname, lastname]
+        )
 
         def remove_accents(text):
             nfkd_form = unicodedata.normalize('NFKD', text)
             return nfkd_form.encode('ASCII', 'ignore')
-        
+
         clean_tokens = map(remove_accents, lowered_tokens)
         tokens = map(lambda x: x.decode('utf-8'), clean_tokens)
         return list(tokens)
-    
+
     @property
     def guess_separator(self):
         for separator in self.separators:
             if separator in self.pattern:
                 yield separator
+
+    def _generate_with_separator(self, firstname, lastname, separator='.'):
+        """Generate an email pattern using a separator"""
+        firstname, lastname = self.clean(firstname, lastname)
+        name = [firstname, separator, lastname]
+        # Create a permutation of all possibilities
+        # using firstname, separator and lastname
+        result = list(permutations([0, 1, 2], 3))
+
+        items = []
+        for x, y, z in result:
+            user = name[x], name[y], name[z]
+            items.append(''.join(user))
+
+        def clean_pattern(value):
+            return all([
+                not value.startswith(separator),
+                not value.endswith(separator)
+            ])
+        yield list(filter(clean_pattern, items))
+
+    def _generate_with_separators(self, firstname, lastname, only=[]):
+        """Generate multiple email patterns using a separator"""
+        results = []
+        for separator in self.separators:
+            if only and separator not in only:
+                continue
+
+            result = self._generate_with_separator(
+                firstname,
+                lastname,
+                separator=separator
+            )
+            results.extend(list(result))
+        return results
 
     def _substitute(self, firstname, lastname):
         firstname, lastname = self.clean(firstname, lastname)
@@ -82,7 +124,7 @@ class Patterns:
             first_value = pattern.replace('firstname', firstname)
             second_value = first_value.replace('lastname', lastname)
         return second_value
-    
+
     def as_email(self, firstname, lastname):
         self._firstname = firstname
         self._lastname = lastname
@@ -97,7 +139,8 @@ class Patterns:
 
 
 class Email(Patterns):
-    """Represents a generated email address"""
+    """Represents a generated email address using
+    a specific pattern"""
 
     def __init__(self, pattern, firstname, lastname):
         super().__init__(pattern)
@@ -105,35 +148,36 @@ class Email(Patterns):
 
     def __repr__(self):
         return f'<Email: {self.email}>'
-    
+
     def __str__(self):
         return self.email
-    
+
     def __hash__(self):
         user, domain = self.deconstruct
         return hash([self.email, user, domain, self.pattern])
-    
+
     def __eq__(self, obj):
         return self.email == str(obj)
-    
+
     def __contains__(self, obj):
         return str(obj) in self.email
-    
+
     @property
     def deconstruct(self):
         user, domain = self.email.rsplit('@', maxsplit=1)
         return user, domain
-    
+
     @property
     def reconstruct(self):
         return '@'.join(self.deconstruct)
-        
+
 
 class EmailGenerator:
     """Generate a list of potential business emails
     from a firstname and a lastname"""
 
     emails = []
+
     def __init__(self, firstname, lastname):
         for pattern in EMAIL_PATTERNS:
             self.emails.append(Email(pattern, firstname, lastname))
@@ -143,21 +187,25 @@ class EmailGenerator:
 
     def __iter__(self):
         return iter(self.emails)
-    
+
     def __getitem__(self, index):
         return self.emails[index]
-    
+
     def __len__(self):
         return len(self.emails)
-    
+
     def __enter__(self, *args, **kwargs):
         return self.emails
-    
+
     def __exit__(self):
         return False
-    
+
     def to_file(self, name=None):
         with open('test.csv', mode='w', encoding='utf-8', newline='\n') as f:
             emails = map(lambda x: [x], self.emails)
             writer = csv.writer(f)
             writer.writerows(emails)
+
+
+e = Email('firstname.lastname', 'Elodie', 'Gossuin')
+print(e)
