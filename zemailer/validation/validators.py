@@ -27,7 +27,7 @@ class EmailAddress:
     def __str__(self):
         return self.email
     
-    @property
+    @cached_property
     def get_literal_ip(self):
         logic = [
             self.domain.startswith('['),
@@ -88,6 +88,8 @@ def validate(email, **kwargs):
         # return False
 
 
-validate('jortypoazfina@lesburgersdepapa.fr')
+print(validate('hugorombouts@malongo.fr'))
+# print(validate('xavier.royaux@mcdonalds.com'))
+# validate('jortypoazfina@lesburgersdepapa.fr')
 # validate('cedric@lesburgersdepapa.fr')
 # validate('kylie@california-bliss.fr')

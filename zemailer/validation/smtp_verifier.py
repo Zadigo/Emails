@@ -31,7 +31,7 @@ class SMTPVerifier(SMTP):
         """
         code, message = super().mail(sender=sender, options=options)
         if code >= 400:
-            print(code, message)
+            print('mail:', code, message)
             raise
         return code, message
 
