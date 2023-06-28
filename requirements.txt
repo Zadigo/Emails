@@ -1,2 +1,2 @@
-beautifulsoup4==4.7.1
-pipenv==2018.11.26
+dnspython==2.3.0
+requests==2.31.0
