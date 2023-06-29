@@ -28,20 +28,20 @@ def validate_address(value):
 def validate_email(email):
     from zemailer.validation.validators import EmailAddress
     if not isinstance(email, EmailAddress):
-        raise
+        raise ValueError("'email' should be an instance of EmailAddress")
 
     if not USER_REGEX.match(email.user):
-        raise
+        raise ValueError(f'Invalid email address. Got: {email}')
 
     if email.get_literal_ip is not None:
         result = LITERAL_REGEX.match(email.ace_formatted_domain)
         if result is None:
-            raise
+            raise ValueError(f'Invalid email address. Got: {email}')
 
         if not validate_ipv6_address(result[1]):
-            raise
+            raise ValueError(f'Invalid email address. Got: {email}')
     else:
         if HOST_REGEX.match(email.ace_formatted_domain) is None:
-            raise
+            raise ValueError(f'Invalid email address. Got: {email}')
 
     return True

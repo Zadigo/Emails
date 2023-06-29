@@ -2,6 +2,8 @@ import idna
 from functools import cached_property
 from zemailer.validation.dns_verifier import verify_dns
 from zemailer.validation.smtp_verifier import smtp_check
+from zemailer.validation.blacklist import blacklist
+from zemailer.validation.email_verifier import validate_email
 
 
 class EmailAddress:
@@ -52,7 +54,7 @@ def validate_or_fail(email, *, check_format=True, check_blacklist=True, check_dn
     email = EmailAddress(email)
 
     if check_format:
-        pass
+        validate_email(email)
 
     if check_blacklist:
         pass

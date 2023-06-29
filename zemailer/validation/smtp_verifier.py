@@ -52,10 +52,10 @@ class SMTPVerifier(SMTP):
         code, message = super().rcpt(recip=recip, options=options)
         if code >= 500:
             # Address clearly invalid: issue negative result
-            print(code, message)
+            print('rcpt', code, message)
             raise
         elif code >= 400:
-            print(code, message)
+            print('rcpt', code, message)
             raise
         return code, message
 
