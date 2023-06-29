@@ -1,6 +1,6 @@
 import csv
 
-from zemailer.patterns.utils import EmailGenerator
+from zemailer.patterns import EmailGenerator
 from zemailer.validation.validators import validate
 
 

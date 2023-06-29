@@ -5,6 +5,8 @@ from zemailer.validation.smtp_verifier import smtp_check
 
 
 class EmailAddress:
+    """Represents the raw email object"""
+    
     def __init__(self, email):
         self.email = email
 

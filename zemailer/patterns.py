@@ -1,7 +1,11 @@
+import collections
 import csv
+import json
 import unicodedata
 from functools import cached_property, lru_cache
 from itertools import chain, permutations
+
+from zemailer.validation.validators import validate
 
 # EMAIL_PATTERNS = [
 #     'firstname.lastname',
@@ -76,15 +80,19 @@ class Patterns:
 
 
 class Email:
-    """Represents an email object"""
+    """Represents an email object
+
+    >>> Email("kendall.jenner", "gmail.com")
+    """
 
     def __init__(self, user, domain):
+        self.is_valid = False
         self.user = user
         self.domain = domain
         self.email = ''.join([user, '@', domain])
 
     def __repr__(self):
-        return self.email
+        return f'<Email: {self.email} is_valid={self.is_valid}>'
 
     def __str__(self):
         return self.email
@@ -97,6 +105,10 @@ class Email:
 
     def __eq__(self, obj):
         return str(obj) == self.email
+
+    def test(self, **kwargs):
+        """Tests if this is a valid email addresss"""
+        self.is_valid = validate(self.email, **kwargs)
 
 
 class Emails(Patterns):
@@ -138,12 +150,16 @@ class Emails(Patterns):
 
     @cached_property
     def emails(self):
+        """Returns Email instances
+        """
         for tokens in self.construct:
             user, _, domain = tokens
             yield Email(user, domain)
 
     @cached_property
     def users(self):
+        """Returns the list of patterns for
+        the given user"""
         items = [
             list(self.generate_with_separators(only=self.pattern_only)),
             list(self.generate_simple_emails())
@@ -151,7 +167,34 @@ class Emails(Patterns):
         return chain(*items)
 
     def to_file(self, name=None):
+        """Outputs the results to a csv file"""
         with open('test.csv', mode='w', encoding='utf-8', newline='\n') as f:
             emails = map(lambda x: [x], self)
             writer = csv.writer(f)
             writer.writerows(emails)
+
+
+class ValidateEmails:
+    """Validate a list of email addresses"""
+    
+    def __init__(self, emails, test_args={}):
+        if not isinstance(emails, (tuple, list)):
+            raise
+
+        self.results = collections.OrderedDict()
+
+        for item in emails:
+            if not isinstance(item, Email):
+                raise
+            self.results[item.email] = item.test(**test_args)
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__}: {self.results}>'
+
+    def __getitem__(self, index):
+        return self.results.get(index, None)
+
+    def to_file(self, filename=None):
+        with open('test.json', mode='w') as f:
+            json.dump(self.results, f)
+

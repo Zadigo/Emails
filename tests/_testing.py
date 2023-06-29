@@ -1,5 +1,5 @@
 from zemailer.core.senders import SendEmail
-from zemailer.patterns.utils import EmailGenerator
+from zemailer.patterns import EmailGenerator
 
 e = EmailGenerator('Kylie', 'Schuyler')
 # e.to_file()
