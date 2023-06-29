@@ -198,3 +198,44 @@ class ValidateEmails:
         with open('test.json', mode='w') as f:
             json.dump(self.results, f)
 
+
+class LoadFile:
+    def __init__(self, filename, domain):
+        self.header = []
+        with open(filename, mode='r') as f:
+            reader = list(csv.reader(f))
+            if not self.has_header(reader[0]):
+                raise ValueError("CSV file should have a header with 'firstname' and 'lastname'")
+            else:
+                self.header = reader.pop(0)
+            self.data = reader
+
+        self.index_of_firstnames = reader.index('firstname')
+        self.index_of_lastnames = reader.index('lastname')
+        self.domain = domain
+
+    @cached_property
+    def firstnames(self):
+        return list(map(lambda x: x[self.index_of_firstnames], self.data))
+    
+    @cached_property
+    def lastnames(self):
+        return list(map(lambda x: x[self.index_of_lastnames], self.data))
+    
+    @cached_property
+    def users(self):
+        for i in range(len(self.data)):
+            yield Emails(
+                self.firstnames[i], 
+                self.lastnames[i],
+                domain=self.domain
+            )
+
+    def resolve(self, test_args={}):
+        return ValidateEmails(self.users, test_args=test_args)
+        
+    def has_header(self, data):
+        return all([
+            'firstname' in data,
+            'lastname' in data
+        ])
