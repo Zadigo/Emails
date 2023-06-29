@@ -87,11 +87,3 @@ def validate(email, **kwargs):
         return False
     else:
         return any(validation_results)
-        # return False
-
-
-print(validate('hugorombouts@malongo.fr'))
-# print(validate('xavier.royaux@mcdonalds.com'))
-# validate('jortypoazfina@lesburgersdepapa.fr')
-# validate('cedric@lesburgersdepapa.fr')
-# validate('kylie@california-bliss.fr')

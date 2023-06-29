@@ -1,10 +1,14 @@
-from flask import Flask, jsonify, request
 import csv
+
+from flask import Flask, jsonify, request, sessions
 from flask.templating import render_template
 from werkzeug.utils import secure_filename
+
 from zemailer.validation.validators import validate
 
 app = Flask(__name__)
+
+app.secret_key = 'test'
 
 
 @app.route('/', methods=['get'])

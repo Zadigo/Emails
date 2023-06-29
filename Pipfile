@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+dnspython = "==2.3.0"
+flask = "*"
+nltk = "==3.8.1"
+pandas = "==1.5.3"
+quart = "*"
+redis = "==4.5.5"
+requests = "==2.31.0"
+scikit-learn = "==1.2.2"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"

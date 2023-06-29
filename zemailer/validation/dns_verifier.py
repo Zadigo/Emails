@@ -6,9 +6,9 @@ from zemailer.validation.constants import HOST_REGEX
 
 
 def get_mx_records(domain, timeout):
-    """
-    Returns the DNS records
-    """
+    """Returns the DNS records for the given domain
+
+    >>> get_mx_records("example.com", 10)"""
     try:
         return resolver.resolve(
             qname=domain,
@@ -18,7 +18,7 @@ def get_mx_records(domain, timeout):
     except resolver.NXDOMAIN:
         raise Exception('Domain not found')
     except resolver.NoNameservers:
-        raise resolver.NoNameserverError
+        raise resolver.NoNameservers
     except resolver.Timeout:
         raise Exception('Domain lookup timed out')
     except resolver.YXDOMAIN:
@@ -37,10 +37,11 @@ def clean_mx_records(domain, timeout):
     for record in answer.rrset.processing_order():
         dns_string = record.exchange.to_text().rstrip('.')
         result.add(dns_string)
-
+    
+    # Check that each record follows RFC 
     values = list(map(lambda x: HOST_REGEX.search(string=x), result))
     if not values:
-        raise
+        raise ValueError('No records found')
     return result
 
 
