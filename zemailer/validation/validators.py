@@ -1,9 +1,11 @@
-import idna
 from functools import cached_property
-from zemailer.validation.dns_verifier import verify_dns
-from zemailer.validation.smtp_verifier import smtp_check
+
+import idna
+
 from zemailer.validation.blacklist import blacklist
+from zemailer.validation.dns_verifier import verify_dns
 from zemailer.validation.email_verifier import validate_email
+from zemailer.validation.smtp_verifier import smtp_check
 
 
 class EmailAddress:

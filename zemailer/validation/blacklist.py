@@ -1,7 +1,3 @@
-
-from typing import Any
-
-
 class Blacklist:
     """Checks if the domain is blacklisted or not"""
     
