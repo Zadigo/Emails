@@ -19,6 +19,4 @@ COPY . .
 
 EXPOSE 5589
 
-CMD [ "flask", "--app zemailer/server/app", "--debug", "run" ]
-
-ENTRYPOINT [ "python3", "-m" ]
+ENTRYPOINT [ "python3", "-m", "flask", "--app", "zemailer/server/app", "--debug", "run" ]
