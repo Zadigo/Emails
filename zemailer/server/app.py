@@ -1,23 +1,28 @@
 import csv
 
-from flask import Flask, jsonify, request, sessions
-from flask.templating import render_template
+import quart
+from quart import jsonify, render_template, request, websocket
+from quart.templating import render_template
 from werkzeug.utils import secure_filename
 
+from zemailer.server.connections import RedisConnection
+from zemailer.server.loggers import base_logger
 from zemailer.validation.validators import validate
 
-app = Flask(__name__)
-
+app = quart.Quart(__name__)
+app.logger.addHandler(base_logger.handler)
 app.secret_key = 'test'
+
+redis = RedisConnection()
 
 
 @app.route('/', methods=['get'])
-def home():
-    return render_template('home.html')
+async def home():
+    return await render_template('home.html')
 
 
 @app.route('/verify', methods=['post'])
-def verify_email():
+async def verify_email():
     email = request.form.get('email', None)
     if email is not None:
         print('email', email)
@@ -25,11 +30,11 @@ def verify_email():
 
 
 @app.route('/verify-emails', methods=['post'])
-def verify_emails():
+async def verify_emails():
     file = request.files['email_file']
     if file.content_type != 'text/csv':
         return jsonify({'error': 'File not valid'})
-    
+
     filename = secure_filename(file.filename)
 
     csv_reader = csv.reader(file)
