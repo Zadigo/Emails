@@ -42,6 +42,7 @@ def clean_mx_records(domain, timeout):
     values = list(map(lambda x: HOST_REGEX.search(string=x), result))
     if not values:
         raise ValueError('No records found')
+    print('Found mx records', result)
     return result
 
 

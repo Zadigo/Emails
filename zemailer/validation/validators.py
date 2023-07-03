@@ -26,6 +26,8 @@ class EmailAddress:
                 self.ace_formatted_domain = idna.encode(self.domain).decode('ascii')
             except idna.IDNAError:
                 raise
+        self.is_risky = False
+        self.errors = {}
 
     def __repr__(self):
         return f'<EmailAddress: {self.email}>'

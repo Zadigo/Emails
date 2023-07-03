@@ -5,6 +5,7 @@ import unicodedata
 from functools import cached_property, lru_cache
 from itertools import chain, permutations
 
+from zemailer.utils import random_file_name
 from zemailer.validation.validators import validate
 
 # EMAIL_PATTERNS = [
@@ -77,6 +78,12 @@ class Patterns:
     def generate_simple_emails(self):
         for item in self.generate_templates:
             yield ''.join(item)
+
+    def generate_base_emails(self):
+        return [
+            self._firstname,
+            self._lastname
+        ]
 
 
 class Email:
@@ -162,13 +169,15 @@ class Emails(Patterns):
         the given user"""
         items = [
             list(self.generate_with_separators(only=self.pattern_only)),
-            list(self.generate_simple_emails())
+            list(self.generate_simple_emails()),
+            self.generate_base_emails()
         ]
         return chain(*items)
 
     def to_file(self, name=None):
         """Outputs the results to a csv file"""
-        with open('test.csv', mode='w', encoding='utf-8', newline='\n') as f:
+        name = f'{random_file_name(current_value=name)}.csv'
+        with open(name, mode='w', encoding='utf-8', newline='\n') as f:
             emails = map(lambda x: [x], self)
             writer = csv.writer(f)
             writer.writerows(emails)
