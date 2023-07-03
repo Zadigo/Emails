@@ -1,4 +1,5 @@
 import csv
+import secrets
 
 import quart
 from quart import jsonify, render_template, request, websocket
@@ -7,12 +8,12 @@ from werkzeug.utils import secure_filename
 
 from zemailer.server.connections import RedisConnection
 from zemailer.server.loggers import base_logger
+from zemailer.validation.iterators import verify_from_file
 from zemailer.validation.validators import validate
 
 app = quart.Quart(__name__)
 app.logger.addHandler(base_logger.handler)
 app.secret_key = 'test'
-
 redis = RedisConnection()
 
 
@@ -23,24 +24,23 @@ async def home():
 
 @app.route('/verify', methods=['post'])
 async def verify_email():
-    email = request.form.get('email', None)
-    if email is not None:
-        print('email', email)
-    return jsonify({'test': True})
+    data = await request.files
+    file = data['emails']
+    if file is not None:
+        filename = secure_filename(file.filename)
+        new_file_name = secrets.token_hex(15)
+        with open(f'{app.root_path}/downloads/{new_file_name}.csv', mode='w', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            print(writer)
+            with open(file, mode='r', encoding='utf-8') as d:
+                reader = csv.reader(d)
+                print(reader)   
+        return jsonify({'result': True})
+    else:
+        data = await request.form
+        email = data.get('email', None)
+        if email is not None:
+            result = validate(email)
+        return jsonify({'email': email, 'result': None, 'is_valid': result})
 
-
-@app.route('/verify-emails', methods=['post'])
-async def verify_emails():
-    file = request.files['email_file']
-    if file.content_type != 'text/csv':
-        return jsonify({'error': 'File not valid'})
-
-    filename = secure_filename(file.filename)
-
-    csv_reader = csv.reader(file)
-    csv_data = []
-    for row in csv_reader:
-        csv_data.append(row)
-    return jsonify({'test': True})
-
-# python -m flask --app zemailer/server/app --debug run
+# # python -m flask --app zemailer/server/app --debug run

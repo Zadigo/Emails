@@ -1,6 +1,6 @@
 import csv
 
-from zemailer.patterns import EmailGenerator
+from zemailer.patterns import Emails
 from zemailer.validation.validators import validate
 
 
@@ -8,7 +8,7 @@ def verify_from_name(name, surname):
     """Using a name and a surname, verify that
     we can email to one or many of the created
     email addresses"""
-    instance = EmailGenerator(name, surname)
+    instance = Emails(name, surname)
     for email in instance:
         yield email, validate(email)
 

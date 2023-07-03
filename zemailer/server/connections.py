@@ -1,9 +1,10 @@
-from functools import cached_property
 import os
+from functools import cached_property
+
 import airtable
+import pymemcache
 import redis
 from dotenv import get_key
-import pymemcache
 
 
 class BaseConnection:
