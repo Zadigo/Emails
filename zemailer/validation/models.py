@@ -19,7 +19,7 @@ class EmailEvaluationMixin:
         return {
             'risky': self.is_risky,
             'email': self.email,
-            'evaluation': self.evaluation
+            'evaluation': list(self.evaluation)
         }
 
     def add_error(self, error):

@@ -50,10 +50,6 @@ def validate(email, **kwargs):
     try:
         email_object, validation_results = validate_or_fail(email, **kwargs)
     except Exception:
-        return False
+        return None, False
     else:
         return any(validation_results), email_object
-
-
-# validate('romain.gallon@yopmail.com')
-validate('chassan_s@subway.fr')

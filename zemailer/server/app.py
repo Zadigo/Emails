@@ -25,8 +25,8 @@ async def home():
 @app.route('/verify', methods=['post'])
 async def verify_email():
     data = await request.files
-    file = data['emails']
-    if file is not None:
+    if data:
+        file = data['emails']
         filename = secure_filename(file.filename)
         new_file_name = secrets.token_hex(15)
         with open(f'{app.root_path}/downloads/{new_file_name}.csv', mode='w', encoding='utf-8') as f:
@@ -37,10 +37,14 @@ async def verify_email():
                 print(reader)   
         return jsonify({'result': True})
     else:
+        result = False
+        response = {}
         data = await request.form
         email = data.get('email', None)
         if email is not None:
-            result = validate(email)
-        return jsonify({'email': email, 'result': None, 'is_valid': result})
+            result, email_object = validate(email)
+            if email_object is not None:
+                response = email_object.get_json_response()
+        return jsonify({'email': email, 'is_valid': result, 'validation': response})
 
 # # python -m flask --app zemailer/server/app --debug run
