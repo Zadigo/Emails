@@ -134,7 +134,7 @@ class Emails(Patterns):
         return f'<{self.__class__.__name__} {list(self.emails)}>'
 
     def __iter__(self):
-        return iter(list(self.emails))
+        return iter(self.emails)
 
     def __getitem__(self, index):
         return list(self.emails)[index]

@@ -1,0 +1,128 @@
+{
+	"info": {
+		"_postman_id": "6ce56ccc-5ba8-4f45-ac5d-2f010e8975a4",
+		"name": "Zemailer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8871030"
+	},
+	"item": [
+		{
+			"name": "Verify Email",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "tristan@frogpubs.com",
+							"type": "text"
+						},
+						{
+							"key": "emails",
+							"type": "file",
+							"src": [],
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/verify",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"verify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Emails",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email_file",
+							"type": "file",
+							"src": "/C:/Users/pendenquej/Downloads/test_flask.csv"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/verify/emails",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"verify",
+						"emails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Generate Emails",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "firstname",
+							"value": "Jules",
+							"type": "text"
+						},
+						{
+							"key": "lastname",
+							"value": "lopez",
+							"type": "text"
+						},
+						{
+							"key": "domain",
+							"value": "iae.fr",
+							"type": "text"
+						},
+						{
+							"key": "pattern_only",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/generate",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"generate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

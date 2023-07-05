@@ -10,6 +10,7 @@ from zemailer.server.connections import RedisConnection
 from zemailer.server.loggers import base_logger
 from zemailer.validation.iterators import verify_from_file
 from zemailer.validation.validators import validate
+from zemailer.patterns import Emails
 
 app = quart.Quart(__name__)
 app.logger.addHandler(base_logger.handler)
@@ -47,4 +48,15 @@ async def verify_email():
                 response = email_object.get_json_response()
         return jsonify({'email': email, 'is_valid': result, 'validation': response})
 
-# # python -m flask --app zemailer/server/app --debug run
+
+@app.route('/generate', methods=['post'])
+async def generate_emails_view():
+    data = await request.form
+    instance = Emails(
+        data['firstname'],
+        data['lastname'],
+        domain=data['domain'],
+        pattern_only=data['pattern_only']
+    )
+    emails = list(map(lambda x: str(x), instance))
+    return jsonify({'items': emails, 'count': len(emails)})
