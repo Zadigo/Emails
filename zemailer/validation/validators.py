@@ -5,48 +5,8 @@ import idna
 from zemailer.validation.blacklist import blacklist
 from zemailer.validation.dns_verifier import verify_dns
 from zemailer.validation.email_verifier import validate_email
+from zemailer.validation.models import EmailAddress
 from zemailer.validation.smtp_verifier import smtp_check
-
-
-class EmailAddress:
-    """Represents the raw email object"""
-    
-    def __init__(self, email):
-        self.email = email
-
-        try:
-            self.user, self.domain = self.email.rsplit('@', 1)
-        except ValueError:
-            raise
-
-        if self.get_literal_ip is None:
-            self.ace_formatted_domain = self.domain
-        else:
-            try:
-                self.ace_formatted_domain = idna.encode(self.domain).decode('ascii')
-            except idna.IDNAError:
-                raise
-        self.is_risky = False
-        self.errors = {}
-
-    def __repr__(self):
-        return f'<EmailAddress: {self.email}>'
-
-    def __str__(self):
-        return self.email
-    
-    @cached_property
-    def get_literal_ip(self):
-        logic = [
-            self.domain.startswith('['),
-            self.domain.endswith(']')
-        ]
-        return self.domain[1:-1] if all(logic) else None
-
-    @cached_property
-    def restructure(self):
-        """The ASCII-compatible encoding for the email address"""
-        return '@'.join((self.user, self.ace_formatted_domain))
 
 
 def validate_or_fail(email, *, check_format=True, check_blacklist=True, check_dns=True, dns_timeout=10, check_smtp=True, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False):
@@ -55,15 +15,15 @@ def validate_or_fail(email, *, check_format=True, check_blacklist=True, check_dn
     if the validation result is ambigious, and raise an exception if the
     validation fails
     """
-    email = EmailAddress(email)
+    email_object = EmailAddress(email)
 
     if check_format:
-        validate_email(email)
+        validate_email(email_object)
 
     if check_blacklist:
         pass
 
-    mx_records = verify_dns(email, timeout=dns_timeout)
+    mx_records = verify_dns(email_object, timeout=dns_timeout)
 
     if not check_smtp:
         return True
@@ -71,8 +31,8 @@ def validate_or_fail(email, *, check_format=True, check_blacklist=True, check_dn
     if smtp_from_address is not None:
         pass
 
-    return smtp_check(
-        email=email,
+    return email_object, smtp_check(
+        email=email_object,
         mx_records=mx_records,
         timeout=smtp_timeout,
         helo_host=smtp_helo_host,
@@ -88,8 +48,12 @@ def validate(email, **kwargs):
     if the result is ambigious
     """
     try:
-        validation_results = validate_or_fail(email, **kwargs)
+        email_object, validation_results = validate_or_fail(email, **kwargs)
     except Exception:
         return False
     else:
-        return any(validation_results)
+        return any(validation_results), email_object
+
+
+# validate('romain.gallon@yopmail.com')
+validate('chassan_s@subway.fr')

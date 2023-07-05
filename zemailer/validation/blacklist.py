@@ -6,7 +6,7 @@ class Blacklist:
         self.blacklist = [x.lower() for x in blacklist]
 
     def __call__(self, email):
-        from zemailer.validation.validators import EmailAddress
+        from zemailer.validation.models import EmailAddress
         if not isinstance(email, EmailAddress):
             raise
 

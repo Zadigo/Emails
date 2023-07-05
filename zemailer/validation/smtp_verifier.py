@@ -1,4 +1,9 @@
-from smtplib import SMTP, SMTPResponseException, SMTPServerDisconnected, SMTPNotSupportedError
+from smtplib import (SMTP, SMTPNotSupportedError, SMTPResponseException,
+                     SMTPServerDisconnected)
+from socket import timeout
+from ssl import SSLError
+
+from zemailer.validation.exceptions import AddressNotDeliverableError
 
 
 class SMTPVerifier(SMTP):
@@ -30,8 +35,8 @@ class SMTPVerifier(SMTP):
         """
         code, message = super().mail(sender=sender, options=options)
         if code >= 400:
-            print('mail:', code, message)
-            raise
+            self._sender.add_error('attempt_rejected')
+            raise SMTPResponseException(code, message)
         return code, message
 
     def starttls(self, *args, **kwargs):
@@ -43,6 +48,8 @@ class SMTPVerifier(SMTP):
         except RuntimeError:
             # SSL/TLS support is not available to your Python interpreter
             pass
+        except (SSLError, timeout) as error:
+            raise Exception(error)
 
     def rcpt(self, recip, options=()):
         """
@@ -52,11 +59,13 @@ class SMTPVerifier(SMTP):
         code, message = super().rcpt(recip=recip, options=options)
         if code >= 500:
             # Address clearly invalid: issue negative result
-            print('rcpt', code, message)
-            raise
+            # print('rcpt', code, message)
+            self._sender.add_error('unknown_email')
+            raise AddressNotDeliverableError(code, message)
         elif code >= 400:
-            print('rcpt', code, message)
-            raise
+            # print('rcpt', code, message)
+            self._sender.add_error('attempt_rejected')
+            raise SMTPResponseException(code, message)
         return code, message
 
     def quit(self):
@@ -73,6 +82,7 @@ class SMTPVerifier(SMTP):
             self.close()
 
     def connect(self, host='localhost', port=0, source_address=None):
+        """Tries to establish a connection to the email host"""
         self._command = 'connect'
         self._host = host
         try:
@@ -82,12 +92,14 @@ class SMTPVerifier(SMTP):
                 source_address=source_address
             )
         except OSError as error:
-            raise
+            self._sender.add_error('smtp_protocol')
+            raise SMTPServerDisconnected(str(error))
         else:
             if code >= 400:
-                print(code, message)
-                raise
-        return code, message
+                raise SMTPResponseException(code, message)
+            message = message.decode()
+            self._sender.add_message(host, code, message)
+            return code, message
 
     def check(self, record):
         """
@@ -106,18 +118,22 @@ class SMTPVerifier(SMTP):
             self.mail(sender=self._sender.restructure)
             code, message = self.rcpt(recip=self._recip.restructure)
         except SMTPServerDisconnected as e:
+            self._sender.add_error('dead_server')
             return False
         except SMTPResponseException as e:
             if e.smtp_code >= 500:
+                self._sender.add_error('dead_server')
                 raise Exception(f'Communication error: {self._host} / {message}')
             else:
-                self.errors[self._host] = message
+                # self.errors[self._host] = message
+                self._sender.add_message(self._host, code, message)
             return False
         finally:
             self.quit()
         return code < 400
 
     def check_multiple(self, records):
+        """Checks multiple MX records at once"""
         result = [self.check(x) for x in records]
         if self.errors:
             raise Exception(f'Host errors: {self.errors}')
