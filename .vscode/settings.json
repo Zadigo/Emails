@@ -8,5 +8,11 @@
     ],
     "python.testing.autoTestDiscoverOnSaveEnabled": true,
     "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true
+    "python.testing.unittestEnabled": true,
+    "python.autoComplete.extraPaths": [
+        "Z:/- RESPONSABLE DIGITAL/SCRIPTS/zemailer/zemailer/zemailer"
+    ],
+    "python.analysis.extraPaths": [
+        "Z:/- RESPONSABLE DIGITAL/SCRIPTS/zemailer/zemailer/zemailer"
+    ]
 }

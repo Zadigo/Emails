@@ -5,9 +5,18 @@ from dns.rdtypes.ANY.MX import MX
 from zemailer.validation.constants import HOST_REGEX
 
 
-
 def get_mx_records(domain, timeout, email_object):
-    """Returns the DNS records for the given domain
+    """Returns the DNS (Domain Name System) records 
+    that specify the mail servers responsible for 
+    handling incoming email for the particular domain
+
+    When someone sends an email to an address like `user@example.com`, 
+    the sender's mail server performs a DNS lookup for the MX records 
+    of the `example.com` domain. The MX records provide the necessary information 
+    about the servers that are designated to accept incoming email for that domain
+
+        example.com.      IN MX 10 mail1.example.com. \n
+        example.com.      IN MX 20 mail2.example.com.
 
     >>> get_mx_records("example.com", 10)"""
     try:
@@ -33,9 +42,7 @@ def get_mx_records(domain, timeout, email_object):
     
 
 def clean_mx_records(domain, timeout, email_object):
-    """
-    Returns a list of hostnames in the MX record
-    """
+    """Returns the list of valid MX record"""
     answer = get_mx_records(domain, timeout, email_object)
 
     result = set()
@@ -55,7 +62,7 @@ def clean_mx_records(domain, timeout, email_object):
 
 def verify_dns(email, timeout=10):
     """
-    Check whether there are any responsible SMTP servers for the email
+    Checks whether there are any responsible SMTP servers for the email
     address by looking up the DNS MX records.
 
     In case no responsible SMTP servers can be determined, a variety of
@@ -63,7 +70,7 @@ def verify_dns(email, timeout=10):
     `MXError`. Otherwise, return the list of MX hostnames.
 
     >>> verify_dns('email@gmail.com')
-    ... ['smtp.1.2.3.4]
+    ... {'smtp.1.2.3.4'}
     """
     # from zemailer.validation.validators import EmailAddress
 

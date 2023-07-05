@@ -8,7 +8,9 @@ from zemailer.validation.exceptions import AddressNotDeliverableError
 
 class SMTPVerifier(SMTP):
     """
-    A class that checks an email against a set of MX records
+    Performs an MTA validation, also known as Mail Transfer Agent validation 
+    by verifying the integrity and deliverability of email addresses by 
+    simulating email delivery and interacting with the recipient's mail server
     """
     
     def __init__(self, local_hostname, timeout, debug, sender, recip):
@@ -27,18 +29,6 @@ class SMTPVerifier(SMTP):
         self._command = f'{cmd} {args}' if args else cmd
         super().putcmd(cmd, args)
 
-    def mail(self, sender, options=[]):
-        """
-        Like `smtplib.SMTP.mail`, but raise an appropriate exception on
-        negative SMTP server response.
-        A code > 400 is an error here.
-        """
-        code, message = super().mail(sender=sender, options=options)
-        if code >= 400:
-            self._sender.add_error('attempt_rejected')
-            raise SMTPResponseException(code, message)
-        return code, message
-
     def starttls(self, *args, **kwargs):
         try:
             super().starttls(*args, **kwargs)
@@ -50,15 +40,27 @@ class SMTPVerifier(SMTP):
             pass
         except (SSLError, timeout) as error:
             raise Exception(error)
+        
+    def mail(self, sender, options=[]):
+        """Establishes the legitimacy of the sender's address and assists in the verification process. 
+        The recipient's server can perform checks on the sender's address, such as 
+        verifying its existence or analyzing the sending domain's reputation, 
+        to determine whether to accept or reject the email
+        """
+        code, message = super().mail(sender=sender, options=options)
+        if code >= 400:
+            self._sender.add_error('attempt_rejected')
+            raise SMTPResponseException(code, message)
+        return code, message
 
     def rcpt(self, recip, options=()):
-        """
-        Like `smtplib.SMTP.rcpt`, but handle negative SMTP server
-        responses directly.
+        """Step in which the sending server confirms whether 
+        the recipient's email address is valid and can 
+        accept incoming emails
         """
         code, message = super().rcpt(recip=recip, options=options)
         if code >= 500:
-            # Address clearly invalid: issue negative result
+            # Address clearly invalid
             # print('rcpt', code, message)
             self._sender.add_error('unknown_email')
             raise AddressNotDeliverableError(code, message)
@@ -102,19 +104,13 @@ class SMTPVerifier(SMTP):
             return code, message
 
     def check(self, record):
-        """
-        Run the check for one SMTP server.
-
-        Returns `True` on positive result.
-
-        Returns `False` on ambiguous result (4xx response to `RCPT TO`),
-        while collecting the error message for later use.
-        """
+        """Starts the MTA validation on a single record"""
         try:
             self.connect(host=record)
             self.starttls()
+            # Start the standard MTA email validation
+            # ehlo/helo -> mail -> rcpt
             self.ehlo_or_helo_if_needed()
-            # Checks the email against the mx record
             self.mail(sender=self._sender.restructure)
             code, message = self.rcpt(recip=self._recip.restructure)
         except SMTPServerDisconnected as e:
@@ -142,9 +138,8 @@ class SMTPVerifier(SMTP):
 
 def smtp_check(email, mx_records, timeout=10, helo_host=None, from_address=None, debug=False):
     """
-    Returns `True` as soon as the any of the given server accepts the
-    recipient address
-    """
+    Perform an MTA validation, also known as Mail Transfer Agent validation 
+    by verifying the integrity and deliverability of an email address"""
     sender = from_address or email
     instance = SMTPVerifier(helo_host, timeout, debug, sender, email)
     return instance.check_multiple(mx_records)

@@ -14,7 +14,7 @@ from zemailer.validation.validators import validate
 app = quart.Quart(__name__)
 app.logger.addHandler(base_logger.handler)
 app.secret_key = 'test'
-redis = RedisConnection()
+redis = RedisConnection().get_connection
 
 
 @app.route('/', methods=['get'])

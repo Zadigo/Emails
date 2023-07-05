@@ -24,3 +24,4 @@ En résumé, chez Keppler, nous sommes passionnés par la gastronomie et nous so
 # for email in e:
 s = SendEmail('inglishgoogle.contact@gmail.com',
               'kylie.schuyler@california-bliss.fr', subject, email_body=body)
+

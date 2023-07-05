@@ -26,7 +26,7 @@ def validate_address(value):
 
 
 def validate_email(email):
-    from zemailer.validation.validators import EmailAddress
+    from zemailer.validation.models import EmailAddress
     if not isinstance(email, EmailAddress):
         raise ValueError("'email' should be an instance of EmailAddress")
 
