@@ -1,0 +1,67 @@
+[
+    {
+        "first_name": "Julie",
+        "last_name": "Pauline",
+        "email": "pipicil879@kkoup.com",
+        "completed": false,
+        "first_sent": null,
+        "email_state": {
+            "sent": false,
+            "bounced": false,
+            "opened": false,
+            "clicked": false
+        },
+        "steps": [
+            {
+                "id": null,
+                "category": 1,
+                "date_sent": "",
+                "active": true,
+                "completed": false
+            },
+            {
+                "id": null,
+                "category": 2,
+                "date_sent": "",
+                "active": false,
+                "completed": false
+            },
+            {
+                "id": null,
+                "category": 3,
+                "date_sent": "",
+                "active": false,
+                "completed": false
+            },
+            {
+                "id": null,
+                "category": 4,
+                "date_sent": "",
+                "active": false,
+                "completed": false
+            }
+        ]
+    },
+    {
+        "first_name": "Pauline",
+        "last_name": "Pierrette",
+        "email": "pipicil879@kkoup.com",
+        "completed": false,
+        "first_sent": null,
+        "email_state": {
+            "sent": false,
+            "bounced": false,
+            "opened": false,
+            "clicked": false
+        },
+        "steps": [
+            {
+                "id": null,
+                "category": 1,
+                "date_sent": "",
+                "active": true,
+                "completed": false
+            }
+        ]
+    }
+]
