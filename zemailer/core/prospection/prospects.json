@@ -1,67 +1,46 @@
-[
-    {
-        "first_name": "Julie",
-        "last_name": "Pauline",
-        "email": "pipicil879@kkoup.com",
-        "completed": false,
-        "first_sent": null,
-        "email_state": {
-            "sent": false,
-            "bounced": false,
-            "opened": false,
-            "clicked": false
-        },
-        "steps": [
-            {
-                "id": null,
-                "category": 1,
-                "date_sent": "",
-                "active": true,
-                "completed": false
-            },
-            {
-                "id": null,
-                "category": 2,
-                "date_sent": "",
-                "active": false,
-                "completed": false
-            },
-            {
-                "id": null,
-                "category": 3,
-                "date_sent": "",
-                "active": false,
-                "completed": false
-            },
-            {
-                "id": null,
-                "category": 4,
-                "date_sent": "",
-                "active": false,
-                "completed": false
-            }
-        ]
-    },
-    {
-        "first_name": "Pauline",
-        "last_name": "Pierrette",
-        "email": "pipicil879@kkoup.com",
-        "completed": false,
-        "first_sent": null,
-        "email_state": {
-            "sent": false,
-            "bounced": false,
-            "opened": false,
-            "clicked": false
-        },
-        "steps": [
-            {
-                "id": null,
-                "category": 1,
-                "date_sent": "",
-                "active": true,
-                "completed": false
-            }
-        ]
-    }
-]
+{
+    "items": [
+        {
+            "completed": true,
+            "current_step": 1,
+            "email": "pipicil879@kkoup.com",
+            "first_name": "Julie",
+            "last_name": "Pauline",
+            "steps": [
+                {
+                    "active": true,
+                    "category": 1,
+                    "completed": true,
+                    "date_sent": "2023-07-27 22:28:34.355196+00:00",
+                    "days_before_send": 0,
+                    "email_state": {
+                        "bounced": false,
+                        "clicked": false,
+                        "opened": false,
+                        "sent": false
+                    },
+                    "id": "fcc371aee718dfa21b96",
+                    "next_date": "2023-07-28 08:03:17.118797+00:00",
+                    "template": null
+                },
+                {
+                    "active": true,
+                    "category": 2,
+                    "completed": false,
+                    "date_sent": null,
+                    "days_before_send": 3,
+                    "email_state": {
+                        "bounced": false,
+                        "clicked": false,
+                        "opened": false,
+                        "sent": false
+                    },
+                    "id": "89eed5d6a551ae3289ce",
+                    "next_date": "2023-07-31 08:03:17.118797+00:00",
+                    "template": null
+                }
+            ]
+        }
+    ],
+    "start_date": "2023-07-27 22:28:34.355196+00:00"
+}

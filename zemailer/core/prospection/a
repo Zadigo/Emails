@@ -1,0 +1,46 @@
+{
+    "start_date": null,
+    "items": [
+        {
+            "first_name": "Julie",
+            "last_name": "Pauline",
+            "email": "pipicil879@kkoup.com",
+            "current_step": 2,
+            "completed": true,
+            "steps": [
+                {
+                    "date_sent": null,
+                    "days_before_send": 0,
+                    "next_date": null,
+                    "id": "fcc371aee718dfa21b96",
+                    "template": null,
+                    "active": true,
+                    "completed": false,
+                    "email_state": {
+                        "sent": false,
+                        "bounced": false,
+                        "opened": false,
+                        "clicked": false
+                    },
+                    "category": 1
+                },
+                {
+                    "date_sent": null,
+                    "days_before_send": 3,
+                    "next_date": null,
+                    "id": "89eed5d6a551ae3289ce",
+                    "template": null,
+                    "active": false,
+                    "completed": false,
+                    "email_state": {
+                        "sent": true,
+                        "bounced": false,
+                        "opened": false,
+                        "clicked": false
+                    },
+                    "category": 2
+                }
+            ]
+        }
+    ]
+}
