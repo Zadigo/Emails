@@ -5,7 +5,7 @@ import unicodedata
 from functools import cached_property, lru_cache
 from itertools import chain, permutations
 
-from zemailer.utils import random_file_name
+from zemailer.utils import random_file_name, remove_accents
 from zemailer.validation.validators import validate
 
 # EMAIL_PATTERNS = [
@@ -22,6 +22,20 @@ from zemailer.validation.validators import validate
 # ]
 
 
+class Value:
+    def __init__(self, value):
+        self._cached_value = value
+        clean_value = str(value).encode('utf-8').decode()
+        clean_value = clean_value.strip().lower().title()
+        self.clean_value = remove_accents(clean_value)
+
+    def __repr__(self):
+        return self.clean_value
+
+    def __str__(self):
+        return self.clean_value
+
+
 class Patterns:
     """Encapsulates the different types of patterns
     we can get with business emails"""
@@ -34,12 +48,13 @@ class Patterns:
         firstname, lastname = self.clean(firstname, lastname)
         self._firstname = firstname
         self._lastname = lastname
+        self.fullname = f'{firstname} {lastname}'
 
     @staticmethod
     def clean(firstname, lastname):
         lowered_tokens = map(
             lambda x: x.lower().strip(),
-            [firstname, lastname]
+            [str(firstname), str(lastname)]
         )
 
         def remove_accents(text):
@@ -108,10 +123,13 @@ class Email:
         return (self.user, '@', self.domain)
 
     def __hash__(self):
-        return hash([self.user, self.domain, self.email])
+        return hash([self.user.firstname, self.user.lastname, self.domain, self.email])
 
     def __eq__(self, obj):
         return str(obj) == self.email
+
+    def __contains__(self, value):
+        return value in self.email
 
     def test(self, **kwargs):
         """Tests if this is a valid email addresss"""
@@ -128,7 +146,7 @@ class Emails(Patterns):
         self.domain = domain
 
     def __repr__(self):
-        return f'<Emails: {self.emails}>'
+        return f'<{self.fullname}: {self.emails}>'
 
     def __repr__(self):
         return f'<{self.__class__.__name__} {list(self.emails)}>'
@@ -147,6 +165,15 @@ class Emails(Patterns):
 
     def __exit__(self):
         return False
+
+    def __contains__(self, value):
+        result = []
+        for email in self.emails:
+            if value in email:
+                result.append(True)
+            else:
+                result.append(False)
+        return any(result)
 
     @cached_property
     def construct(self):
@@ -185,7 +212,7 @@ class Emails(Patterns):
 
 class ValidateEmails:
     """Validate a list of email addresses"""
-    
+
     def __init__(self, emails, test_args={}):
         if not isinstance(emails, (tuple, list)):
             raise
@@ -209,42 +236,76 @@ class ValidateEmails:
 
 
 class LoadFile:
-    def __init__(self, filename, domain):
+    def __init__(self, filename, domain, pattern_only=[]):
         self.header = []
         with open(filename, mode='r') as f:
             reader = list(csv.reader(f))
             if not self.has_header(reader[0]):
-                raise ValueError("CSV file should have a header with 'firstname' and 'lastname'")
-            else:
-                self.header = reader.pop(0)
-            self.data = reader
+                raise ValueError(
+                    "CSV file should have a header with 'firstname' and 'lastname'")
 
-        self.index_of_firstnames = reader.index('firstname')
-        self.index_of_lastnames = reader.index('lastname')
-        self.domain = domain
+            self.header = reader.pop(0)
+            self.data = reader
+            self.index_of_firstnames = self.header.index('firstname')
+            self.index_of_lastnames = self.header.index('lastname')
+            self.domain = domain
+            self.pattern_only = pattern_only
+            self.filename = filename
+
+    def __repr__(self):
+        return f"LoadFile('{self.filename}')"
+
+    def __iter__(self):
+        for user in self.users:
+            yield user
 
     @cached_property
     def firstnames(self):
-        return list(map(lambda x: x[self.index_of_firstnames], self.data))
-    
+        result = []
+        for items in self.data:
+            try:
+                instance = Value(items[self.index_of_firstnames])
+                result.append(instance)
+            except:
+                pass
+        return result
+
     @cached_property
     def lastnames(self):
-        return list(map(lambda x: x[self.index_of_lastnames], self.data))
-    
+        result = []
+        for items in self.data:
+            try:
+                instance = Value(items[self.index_of_lastnames])
+                result.append(instance)
+            except:
+                pass
+        return result
+
     @cached_property
     def users(self):
         for i in range(len(self.data)):
             yield Emails(
-                self.firstnames[i], 
-                self.lastnames[i],
-                domain=self.domain
+                self.firstnames[-1],
+                self.lastnames[-1],
+                domain=self.domain,
+                pattern_only=self.pattern_only
             )
 
     def resolve(self, test_args={}):
         return ValidateEmails(self.users, test_args=test_args)
-        
+
     def has_header(self, data):
         return all([
             'firstname' in data,
             'lastname' in data
         ])
+
+    def to_file(self, name=None):
+        """Outputs the results to a csv file"""
+        name = f'{random_file_name(current_value=name)}.csv'
+        with open(name, mode='w', encoding='utf-8', newline='\n') as f:
+            emails = []
+            writer = csv.writer(f)
+            for emails in self:
+                for email in emails:
+                    writer.writerow([email])
